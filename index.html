@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Главбух PRO 2026 – v7.0 Enterprise</title>
+    <title>Главбух PRO 2026 – v7.1 Enterprise</title>
     <style>
         :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #e74c3c; --warning: #f39c12; --bg: #f4f7f6; --surface: #ffffff; }
         * { box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: var(--bg); color: #333; -webkit-font-smoothing: antialiased; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: var(--bg); color: #333; -webkit-font-smoothing: antialiased; padding-bottom: 80px; /* Отступ для плавающей кнопки */ }
         .container { max-width: 1250px; margin: 20px auto; background: var(--surface); padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         h1, h2 { color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-top: 0; }
         
@@ -29,6 +29,11 @@
         .btn-secondary { background: #7f8c8d; }
         .btn-delete-row { background: var(--danger); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; min-height: 44px;}
         
+        /* ПЛАВАЮЩАЯ КНОПКА СОХРАНЕНИЯ (НОВОЕ) */
+        .fab-save { position: fixed; bottom: 30px; right: 30px; background-color: var(--success); color: white; border: none; border-radius: 50px; padding: 15px 30px; font-size: 16px; font-weight: bold; box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4); cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; gap: 8px;}
+        .fab-save:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(39, 174, 96, 0.5); }
+        .fab-save:active { transform: translateY(1px); }
+        
         .header-controls { display: flex; justify-content: space-between; align-items: flex-end; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px; gap: 20px; border: 1px solid #eee; flex-wrap: wrap; }
         .header-controls > div { flex: 1; min-width: 200px; }
         
@@ -42,7 +47,6 @@
         .error-field { border: 2px solid var(--danger) !important; background-color: #fadbd8 !important; }
         .debt-label { font-size: 13px; color: var(--danger); margin-top: 8px; display: block; font-weight: bold; }
         
-        /* ВИЗУАЛЬНЫЙ ТРЕКЕР БЮДЖЕТА (НОВОЕ) */
         .budget-tracker { margin-top: 25px; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
         .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: var(--primary);}
         .progress-bar-bg { width: 100%; height: 16px; background: #ecf0f1; border-radius: 10px; overflow: hidden; }
@@ -55,7 +59,6 @@
         th { background-color: var(--primary); color: white; font-size: 14px; }
         th:first-child { border-top-left-radius: 8px; } th:last-child { border-top-right-radius: 8px; }
         
-        /* ЦВЕТОВОЕ КОДИРОВАНИЕ СТРОК (UX) */
         tr.row-category-components { background-color: #f0f8ff !important; }
         tr.row-category-components td:first-child { border-left: 4px solid #3498db; }
         tr.row-category-materials { background-color: #f0fdf4 !important; }
@@ -113,7 +116,10 @@
         .fot-select-wrapper { display: none; gap: 8px; align-items: center; margin-bottom: 0; }
         .fot-select-wrapper select { flex: 1; margin-bottom: 0; }
         .fot-select-wrapper .btn { flex-shrink: 0; padding: 0 15px; height: 44px; }
-        td .docs-check { transform: scale(1.5); cursor: pointer; }
+        
+        /* ИСПРАВЛЕННЫЙ СТИЛЬ ЧЕКБОКСА (НОВОЕ) */
+        td .docs-check { width: 24px; height: 24px; cursor: pointer; margin: 0 auto; display: block; accent-color: var(--accent); }
+        .td-center { text-align: center; vertical-align: middle !important;}
         
         .category-summary { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-top: 15px; display: none; border: 1px solid #e2e8f0; }
         .category-summary table { margin-bottom: 0; border-collapse: collapse; width: 100%; }
@@ -144,6 +150,7 @@
             .dash-table { min-width: 900px; }
             .row-actions { display: flex; gap: 10px; }
             .row-actions button { flex: 1; }
+            .fab-save { bottom: 20px; right: 20px; padding: 12px 20px; font-size: 14px; }
         }
     </style>
 </head>
@@ -179,7 +186,6 @@
         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex: 3; justify-content: flex-end;">
             <select id="savedProjects" style="width: auto; min-width: 250px; margin-bottom: 0;"><option value="">-- Выбрать проект --</option></select>
             <button class="btn" style="background:#ecf0f1; color:var(--primary); margin-bottom: 0;" onclick="App.loadProject()">Открыть</button>
-            <button class="btn btn-success" style="margin-bottom: 0;" onclick="App.saveProject(false)">Сохранить</button>
             <button class="btn btn-danger" style="margin-bottom: 0;" onclick="App.deleteProject()">Удалить</button>
             <button class="btn btn-secondary" style="margin-bottom: 0;" onclick="App.clearProject()">Новый</button>
         </div>
@@ -190,9 +196,14 @@
             <label>Сумма контракта (План):</label>
             <input type="text" inputmode="decimal" id="revenuePlan" class="money" value="1 200 000" oninput="App.formatMoneyInput(event); App.autoSave();">
         </div>
-        <div class="col" style="min-width: 150px; background:#e8f8f5; padding:12px; border-radius:8px; border:1px solid #1abc9c;">
-            <label style="color:#16a085;">Пришло на счет (Аванс):</label>
-            <input type="text" inputmode="decimal" id="revenueFact" class="money" value="600 000" oninput="App.formatMoneyInput(event); App.autoSave();">
+        <div class="col" style="min-width: 200px; background:#e8f8f5; padding:12px; border-radius:8px; border:1px solid #1abc9c;">
+            <label style="color:#16a085; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span>Пришло на счет:</span>
+                <span style="display:flex; align-items:center; gap:4px; font-weight: normal; color: #333;">
+                    <input type="number" id="advancePercent" style="width: 55px; padding: 2px 4px; min-height: 24px; text-align: center; border: 1px solid #bdc3c7; border-radius: 4px;" min="0" max="100" placeholder="%" oninput="App.calculateAdvanceFromPercent()"> %
+                </span>
+            </label>
+            <input type="text" inputmode="decimal" id="revenueFact" class="money" value="600 000" style="margin-bottom: 0;" oninput="App.formatMoneyInput(event); App.updateAdvancePercent(); App.autoSave();">
             <span id="debtLabel" class="debt-label">Дебиторка: 600 000 ₽</span>
         </div>
         
@@ -285,6 +296,10 @@
     </div>
 </div>
 
+<button class="fab-save" onclick="App.saveProject(false)">
+    <span>💾 Сохранить</span>
+</button>
+
 <div id="dashboardModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="App.closeDashboard()">&times;</span>
@@ -322,9 +337,6 @@
 </div>
 
 <script>
-// ============================================================
-// 1. СЕРВИС ХРАНЕНИЯ (ПРОКСИ ДЛЯ ЗАЩИТЫ ОТ iOS БЛОКИРОВОК)
-// ============================================================
 const StorageService = {
     _memory: {},
     _useLocalStorage: true,
@@ -356,9 +368,6 @@ const StorageService = {
     }
 };
 
-// ============================================================
-// 2. ПРИЛОЖЕНИЕ (АРХИТЕКТУРА)
-// ============================================================
 const App = {
     currentProjectId: 'project_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
     expenseIdCounter: 0,
@@ -373,6 +382,7 @@ const App = {
         this.updateProjectList();
         this.addExpenseRow();
         this.calculate();
+        this.updateAdvancePercent();
 
         window.addEventListener('beforeunload', (e) => {
             const name = this.safeGetElement('projectName')?.value?.trim();
@@ -390,7 +400,7 @@ const App = {
         if (!str) return 0;
         const cleaned = String(str).replace(/[^\d.,]/g, '').replace(',', '.');
         const parsed = parseFloat(cleaned);
-        return isNaN(parsed) ? 0 : Math.abs(parsed); // Math.abs защищает от ввода минусов
+        return isNaN(parsed) ? 0 : Math.abs(parsed); 
     },
 
     formatMoneyInput(e) {
@@ -409,6 +419,36 @@ const App = {
     safeSetText(id, text) {
         const el = this.safeGetElement(id);
         if (el) el.innerText = text;
+    },
+
+    // ---- НОВОЕ: РАСЧЕТ АВАНСА (% <-> СУММА) ----
+    calculateAdvanceFromPercent() {
+        const planEl = this.safeGetElement('revenuePlan');
+        const percEl = this.safeGetElement('advancePercent');
+        const factEl = this.safeGetElement('revenueFact');
+        if(!planEl || !percEl || !factEl) return;
+        
+        let perc = parseFloat(percEl.value) || 0;
+        if(perc > 100) { perc = 100; percEl.value = 100; }
+        
+        const plan = this.getNumber(planEl.value);
+        const amount = (plan * perc) / 100;
+        
+        factEl.value = Math.round(amount).toLocaleString('ru-RU');
+        this.calculate();
+        this.autoSave();
+    },
+
+    updateAdvancePercent() {
+        const plan = this.getNumber(this.safeGetElement('revenuePlan')?.value);
+        const fact = this.getNumber(this.safeGetElement('revenueFact')?.value);
+        const percEl = this.safeGetElement('advancePercent');
+        
+        if(percEl && plan > 0) {
+            percEl.value = Math.round((fact / plan) * 100);
+        } else if (percEl) {
+            percEl.value = '';
+        }
     },
 
     // ---- КОМАНДА ----
@@ -461,7 +501,7 @@ const App = {
         }
     },
 
-    // ---- ВАЛИДАЦИЯ (ЗАЩИТА ОТ ДУРАКА) ----
+    // ---- ВАЛИДАЦИЯ ----
     validateRow(row) {
         try {
             const catEl = row.querySelector('.exp-category');
@@ -602,13 +642,13 @@ const App = {
                     <div class="nal-warning">+ обнал</div><div class="npd-warning">+ 6% налог</div>
                 </td>
                 <td data-label="Сумма (₽)">
-                    <input type="text" inputmode="decimal" class="exp-amount money" value="${data ? Number(data.amount).toLocaleString('ru-RU') : ''}" oninput="App.formatMoneyInput(event); App.validateRow(this.closest('tr')); App.autoSave();" style="margin-bottom: 0;" placeholder="0">
+                    <input type="text" inputmode="decimal" class="exp-amount money" value="${data && data.amount ? Number(data.amount).toLocaleString('ru-RU') : ''}" oninput="App.formatMoneyInput(event); App.validateRow(this.closest('tr')); App.autoSave();" style="margin-bottom: 0;" placeholder="0">
                     <button class="btn btn-secondary" style="font-size:11px; padding:6px; margin-top:5px; width: 100%; border-radius: 4px;" onclick="App.suggestAmount(this)">💡 Подставить среднюю</button>
                 </td>
-                <td data-label="Документы" style="text-align: center;">
+                <td data-label="Документы" class="td-center">
                     <input type="checkbox" class="exp-docs docs-check" onchange="App.calculate(); App.autoSave();" ${docsChecked}>
                 </td>
-                <td data-label="Действия" style="text-align: center;">
+                <td data-label="Действия" class="td-center">
                     <div class="row-actions" style="display:flex; gap:5px; flex-direction:column;">
                         <button class="btn btn-secondary" style="font-size:13px; padding:8px; min-height:36px;" onclick="App.duplicateRow(this)">📋 Копия</button>
                         <button class="btn-delete-row" style="min-height:36px; padding:8px;" onclick="App.removeExpenseRow('${row.id}')">✕</button>
@@ -625,7 +665,7 @@ const App = {
 
             this.updateRowUI(row);
             this.calculate();
-        } catch (e) {}
+        } catch (e) { console.error("Add Row Error:", e); }
     },
 
     duplicateRow(btn) {
@@ -732,6 +772,8 @@ const App = {
             const planRev = this.getNumber(planRevInput.value);
             const factRev = this.getNumber(factRevInput.value);
             const expPlan = this.getNumber(expPlanInput.value);
+            
+            this.updateAdvancePercent();
 
             this.safeSetText('debtLabel', "Дебиторка: " + Math.max(0, planRev - factRev).toLocaleString('ru-RU') + " ₽");
 
@@ -838,7 +880,7 @@ const App = {
                     html += `<tr><td>${catNames[cat] || cat}</td><td>${Math.round(sums[cat]).toLocaleString('ru-RU')} ₽</td><td>${perc}%</td></tr>`;
                 }
             }
-            summaryBody.innerHTML = html || '<tr><td colspan="3">Нет данных</td></tr>';
+            summaryBody.innerHTML = html || '<tr><td colspan=\"3\">Нет данных</td></tr>';
         } catch(e) {}
     },
 
@@ -945,6 +987,7 @@ const App = {
         const pName = this.safeGetElement('projectName'); if (pName) pName.value = '';
         const rP = this.safeGetElement('revenuePlan'); if (rP) rP.value = '1 200 000';
         const rF = this.safeGetElement('revenueFact'); if (rF) rF.value = '0';
+        const aP = this.safeGetElement('advancePercent'); if (aP) aP.value = '50';
         const eP = this.safeGetElement('expensePlan'); if (eP) eP.value = '700 000';
         const tS = this.safeGetElement('tax_system'); if (tS) tS.value = 'usn6';
         const tM = this.safeGetElement('targetMargin'); if (tM) tM.value = '35';
@@ -979,6 +1022,7 @@ const App = {
             let exps = (data.expenses && data.expenses.length) ? data.expenses : [{}];
             for (let i = 0; i < exps.length; i++) { this.addExpenseRow(exps[i]); }
             this.calculate();
+            this.updateAdvancePercent();
             this.isDirty = false;
         } catch(e){}
     },
@@ -1017,7 +1061,6 @@ const App = {
         } catch(e){}
     },
 
-    // ---- ИМПОРТ / ЭКСПОРТ ----
     exportBackup() {
         let projects = {}; let team = this.defaultTeam;
         try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
@@ -1107,7 +1150,17 @@ const App = {
         link.click();
     },
 
-    // ---- ДАШБОРД (С АНАЛИЗОМ ОТКЛОНЕНИЙ) ----
+    hardReset() {
+        if (confirm("ВНИМАНИЕ! Полное удаление базы. Продолжить?")) {
+            StorageService.del('ledProjects');
+            StorageService.del('ledTeam');
+            StorageService.del('amountHistory');
+            alert("Очищено.");
+            location.reload();
+        }
+    },
+
+    // ---- ДАШБОРД ----
     showDashboard() {
         try {
             const modal = this.safeGetElement('dashboardModal');
@@ -1147,18 +1200,9 @@ const App = {
                 const taxes = this.getTaxData(plan, fact, acceptedExp, inputNds, p.tax_system || 'usn6');
                 const debt = Math.max(0, plan - fact);
                 const cash = fact - expFact - taxes.taxFact;
-                
-                // РАСЧЕТ ОТКЛОНЕНИЯ (ПРАВИЛЬНЫЙ ФИНАНСОВЫЙ: Лимит - Факт. Плюс = экономия)
                 const deviation = expPlan - expFact;
 
-                sumPlan += plan;
-                sumFact += fact;
-                sumDebt += debt;
-                sumExpPlan += expPlan;
-                sumExpFact += expFact;
-                sumDev += deviation;
-                sumTax += taxes.taxFact;
-                sumCash += cash;
+                sumPlan += plan; sumFact += fact; sumDebt += debt; sumExpPlan += expPlan; sumExpFact += expFact; sumDev += deviation; sumTax += taxes.taxFact; sumCash += cash;
                 const projName = p.name || "Проект без названия";
 
                 tbody.innerHTML += `
@@ -1190,9 +1234,7 @@ const App = {
             this.safeSetText('dashSumCash', Math.round(sumCash).toLocaleString() + " ₽");
 
             modal.style.display = "block";
-        } catch (error) {
-            alert("Ошибка Дашборда!\n" + error.message);
-        }
+        } catch (error) { alert("Ошибка Дашборда!\n" + error.message); }
     },
 
     closeDashboard() {
