@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Главбух PRO 2026 – v8.1</title>
+    <title>Главбух PRO 2026 – v8.2</title>
     <link rel="manifest" href="./manifest.webmanifest">
     <meta name="theme-color" content="#2c3e50">
     <meta name="mobile-web-app-capable" content="yes">
@@ -14,6 +14,18 @@
     <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
     <script src="./pwa.js" defer></script>
     <style>
+        .equipment-fields { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; margin-top: 8px; }
+        .equipment-fields label { font-size: 11px; letter-spacing: 0; text-transform: none; }
+        .equipment-fields input, .equipment-fields select { font-size: 15px; min-width: 0; padding: 10px 6px; }
+        .equipment-amount-note { display: block; font-size: 12px; color: #5e6e7a; margin-top: 7px; overflow-wrap: anywhere; }
+        .fot-select-wrapper select { min-width: 0; }
+        .optional-settings { margin-bottom: 18px; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; }
+        .optional-settings summary { cursor: pointer; font-weight: 600; }
+        .optional-settings input { max-width: 160px; }
+        .row-category-equipment { background: #fff5f0; }
+        .row-category-equipment td:first-child { border-left: 4px solid #e67e22; }
+        .row-category-logistics { background: #f0f4f8; }
+        .row-category-logistics td:first-child { border-left: 4px solid #34495e; }
         [hidden] { display: none !important; }
         .app-install { margin: 0 0 16px; font-size: 14px; line-height: 1.5; }
         .app-install summary { cursor: pointer; color: var(--primary); font-weight: 600; padding: 10px 0; }
@@ -197,7 +209,7 @@
     </div>
 
     <div class="top-bar">
-        <h1>ГЛАВБУХ PRO · 8.1</h1>
+        <h1>ГЛАВБУХ PRO · 8.2</h1>
         <div id="saveIndicator">💾 Сохранено</div>
         <div class="btn-group">
             <button class="btn btn-success" onclick="App.exportBackup()">📤 Выгрузить базу</button>
@@ -258,11 +270,15 @@
             <label>Маржа (%):</label>
             <input type="number" inputmode="decimal" id="targetMargin" value="35" min="0" oninput="this.value = Math.abs(this.value); App.calculate(); App.autoSave();">
         </div>
-        <div class="col" style="min-width: 100px;">
-            <label>Резерв комиссии (% наличных):</label>
-            <input type="number" inputmode="decimal" id="cashFee" value="0" min="0" oninput="this.value = Math.abs(this.value); App.calculate(); App.autoSave();">
-        </div>
+
     </div>
+
+    <details id="commissionSettings" class="optional-settings">
+        <summary>Дополнительный резерв на комиссии</summary>
+        <p>Если при оплате наличными ожидаются дополнительные затраты, можно заложить их здесь. Например, 2% от 10 000 ₽ наличными — резерв 200 ₽. Он уменьшает расчётную прибыль, но не меняет фактические расходы и остаток денег. Если резерв не нужен, оставь 0.</p>
+        <label for="cashFee">Резерв от наличных расходов, %</label>
+        <input type="number" inputmode="decimal" id="cashFee" value="0" min="0" step="0.01" oninput="App.calculate(); App.autoSave()">
+    </details>
 
     <div class="budget-tracker">
         <div class="progress-header">
@@ -285,7 +301,8 @@
             <option value="cables">Кабеля/коммутация</option>
             <option value="consumables">Расходники</option>
             <option value="fot">ФОТ (Команда)</option>
-            <option value="logistic">Спецтехника/Логистика</option>
+            <option value="equipment">Спецтехника</option>
+            <option value="logistics">Логистика</option>
             <option value="agency">Коммерческие</option>
             <option value="other">Прочие</option>
         </select>
@@ -417,7 +434,7 @@ const App = {
     deletedExpenses: {},
     loading: false,
     lastStamp: 0,
-    categories: ['components', 'materials', 'power_board', 'cables', 'consumables', 'fot', 'logistic', 'agency', 'other'],
+    categories: ['components', 'materials', 'power_board', 'cables', 'consumables', 'fot', 'equipment', 'logistics', 'agency', 'other'],
     projectFields: ['name', 'revenuePlan', 'revenueFact', 'expensePlan', 'tax_system', 'targetMargin', 'cashFee'],
 
     init() {
@@ -470,7 +487,7 @@ const App = {
         return projects;
     },
     rowEqual(a, b) {
-        return ['date', 'category', 'comment', 'pay', 'amount', 'docs', 'tasks'].every(key => JSON.stringify(a?.[key]) === JSON.stringify(b?.[key]));
+        return ['date', 'category', 'comment', 'pay', 'amount', 'docs', 'tasks', 'equipment'].every(key => JSON.stringify(a?.[key]) === JSON.stringify(b?.[key]));
     },
     mergeProject(local, incoming) {
         if (!local) return structuredClone(incoming);
@@ -502,6 +519,7 @@ const App = {
             const el = this.safeGetElement(field === 'name' ? 'projectName' : field);
             if (el) el.value = data[field] ?? (field === 'tax_system' ? 'usn6' : field === 'name' ? '' : '0');
         }
+        this.safeGetElement('commissionSettings').open = this.getNumber(data.cashFee) > 0;
         this.safeGetElement('categoryFilter').value = 'all';
         this.safeGetElement('expenseBody').replaceChildren();
         this.expenseIdCounter = 0;
@@ -528,11 +546,9 @@ const App = {
                 docs: row.querySelector('.exp-docs').checked,
                 tasks: category === 'fot' ? Array.from(row.querySelectorAll('.task-cb:checked'), cb => cb.value) : []
             };
+            if (category === 'equipment') expense.equipment = this.getEquipmentData(row);
             // A newly added empty line is a placeholder, not an expense.
-            if (!expense.comment.trim() && expense.amount === 0) {
-                if (previous.has(expense.uuid)) { data.deletedExpenses[expense.uuid] = time; this.deletedExpenses[expense.uuid] = time; }
-                continue;
-            }
+            if (!expense.comment.trim() && expense.amount === 0 && !previous.has(expense.uuid) && !(expense.equipment && (expense.equipment.quantity || expense.equipment.rate || expense.equipment.hoursPerShift))) continue;
             expense.updatedAt = this.rowEqual(expense, previous.get(expense.uuid)) ? previous.get(expense.uuid).updatedAt || 0 : time;
             if (expense.updatedAt === time) data.updatedAt = time;
             data.expenses.push(expense);
@@ -613,13 +629,25 @@ const App = {
     },
 
     // ---- КОМАНДА ----
+    getTeamMap(key) {
+        const value = JSON.parse(StorageService.get(key) || '{}');
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Неверный список сотрудников.');
+        const result = Object.assign(Object.create(null), value);
+        for (const time of Object.values(result)) if (Number.isSafeInteger(time) && time >= 0) this.lastStamp = Math.max(this.lastStamp, time);
+        return result;
+    },
+    isRemovedMember(name) {
+        const removed = this.getTeamMap('ledTeamRemoved');
+        return Object.hasOwn(removed, name) && removed[name] >= (this.getTeamMap('ledTeamTimes')[name] || 0);
+    },
     getTeamList() {
-        let team = this.defaultTeam;
-        try {
-            const saved = JSON.parse(StorageService.get('ledTeam'));
-            if (Array.isArray(saved) && saved.every(name => typeof name === 'string')) team = saved;
-        } catch(e) {}
-        return team;
+        let team = [...this.defaultTeam];
+        const saved = JSON.parse(StorageService.get('ledTeam') || 'null');
+        if (Array.isArray(saved) && saved.every(name => typeof name === 'string')) team = saved;
+        return [...new Set(team)].filter(name => !this.isRemovedMember(name));
+    },
+    teamBackup() {
+        return {team: this.getTeamList(), teamRemoved: this.getTeamMap('ledTeamRemoved'), teamTimes: this.getTeamMap('ledTeamTimes')};
     },
 
     loadTeamList() {
@@ -637,80 +665,67 @@ const App = {
                 sel.appendChild(opt);
             });
             if (currentVal && !team.includes(currentVal)) {
-                const option = document.createElement('option'); option.value = currentVal; option.textContent = currentVal; sel.appendChild(option);
+                const option = document.createElement('option'); option.value = currentVal; option.textContent = currentVal + (this.isRemovedMember(currentVal) ? ' (удалён из списка)' : ''); sel.appendChild(option);
             }
             if (currentVal) sel.value = currentVal;
         });
     },
 
-    promptNewMember(btnElement) {
-        const name = prompt("Введите ФИО нового сотрудника:");
-        if (name && name.trim() !== '') {
-            let team = this.getTeamList();
-            if (!team.includes(name.trim())) {
-                team.push(name.trim());
-                StorageService.set('ledTeam', JSON.stringify(team));
-                this.refreshFotSelects();
-            }
-            if (btnElement) {
-                const select = btnElement.previousElementSibling;
-                if (select && select.classList.contains('fot-select')) {
-                    select.value = name.trim();
-                    this.updateRowUI(btnElement.closest('tr'));
-                    this.calculate();
-                    this.autoSave();
-                }
-            }
-        }
+    promptNewMember(button) {
+        const entered = prompt('Введите ФИО сотрудника:');
+        const name = entered?.trim();
+        if (!name) return;
+        if (name.length > 300 || ['__proto__','constructor','prototype'].includes(name)) return alert('Проверь имя сотрудника.');
+        try {
+            const team = this.getTeamList();
+            const times = this.getTeamMap('ledTeamTimes');
+            times[name] = this.stamp();
+            StorageService.set('ledTeamTimes', JSON.stringify(times));
+            StorageService.set('ledTeam', JSON.stringify([...new Set([...team, name])]));
+            this.refreshFotSelects();
+            const select = button.closest('.fot-select-wrapper')?.querySelector('.fot-select');
+            if (select) select.value = name;
+            this.updateRowUI(button.closest('tr')); this.calculate(); this.autoSave();
+        } catch (error) { this.showError(error); alert('Не удалось добавить сотрудника: ' + error.message); }
+    },
+    removeMember(button) {
+        const name = button.closest('.fot-select-wrapper').querySelector('.fot-select').value;
+        if (!name) return alert('Сначала выбери сотрудника.');
+        if (!confirm('Убрать «' + name + '» из списка сотрудников? Ранее записанные выплаты останутся.')) return;
+        try {
+            const removed = this.getTeamMap('ledTeamRemoved');
+            removed[name] = this.stamp();
+            StorageService.set('ledTeamRemoved', JSON.stringify(removed));
+            StorageService.set('ledTeam', JSON.stringify(this.getTeamList()));
+            this.refreshFotSelects();
+        } catch (error) { this.showError(error); alert('Не удалось удалить сотрудника: ' + error.message); }
     },
 
-    // ---- ВАЛИДАЦИЯ ----
     validateRow(row) {
-        try {
-            const catEl = row.querySelector('.exp-category');
-            if (!catEl) return true;
-            const category = catEl.value;
-            const description = row.querySelector(category === 'fot' ? '.fot-select' : '.exp-comment');
-            const amountInput = row.querySelector('.exp-amount');
-            if (!description?.value.trim() && !amountInput?.value.trim()) {
-                row.querySelectorAll('.error-field').forEach(el => el.classList.remove('error-field')); return true;
+        const category = row.querySelector('.exp-category')?.value;
+        if (!category) return true;
+        const comment = row.querySelector(category === 'fot' ? '.fot-select' : '.exp-comment');
+        const amount = row.querySelector('.exp-amount');
+        const equipment = category === 'equipment' ? this.getEquipmentData(row) : null;
+        if (!comment.value.trim() && !amount.value.trim() && (!equipment || (!equipment.quantity && !equipment.rate))) {
+            row.querySelectorAll('.error-field').forEach(input => input.classList.remove('error-field')); return true;
+        }
+        const needsDescription = category !== 'components' && category !== 'equipment';
+        const validDescription = !needsDescription || comment.value.trim() !== '';
+        comment.classList.toggle('error-field', !validDescription);
+        let valid = validDescription && this.getNumber(amount.value) > 0 && amount.checkValidity();
+        amount.classList.toggle('error-field', !(this.getNumber(amount.value) > 0 && amount.checkValidity()));
+        if (equipment) {
+            for (const selector of ['.equipment-quantity', '.equipment-rate']) {
+                const input = row.querySelector(selector);
+                const good = this.getNumber(input.value) > 0 && input.checkValidity();
+                input.classList.toggle('error-field', !good); valid = good && valid;
             }
-            let isValid = true;
-
-            if (category !== 'fot') {
-                const comment = row.querySelector('.exp-comment');
-                if (comment) {
-                    if (comment.value.trim() === '') {
-                        comment.classList.add('error-field');
-                        isValid = false;
-                    } else {
-                        comment.classList.remove('error-field');
-                    }
-                }
-            } else {
-                const select = row.querySelector('.fot-select');
-                if (select) {
-                    if (select.value === '') {
-                        select.classList.add('error-field');
-                        isValid = false;
-                    } else {
-                        select.classList.remove('error-field');
-                    }
-                }
-            }
-
-            const amount = row.querySelector('.exp-amount');
-            if (amount) {
-                const val = this.getNumber(amount.value);
-                if (val <= 0 || !amount.checkValidity()) {
-                    amount.classList.add('error-field');
-                    isValid = false;
-                } else {
-                    amount.classList.remove('error-field');
-                }
-            }
-            return isValid;
-        } catch (e) { return true; }
+            const hours = row.querySelector('.equipment-hours');
+            const good = equipment.unit !== 'shift' || !hours.value.trim() || (this.getNumber(hours.value) > 0 && this.getNumber(hours.value) <= 24 && hours.checkValidity());
+            hours.classList.toggle('error-field', !good); valid = good && valid;
+        }
+        return valid;
     },
 
     validateAllRows() {
@@ -724,30 +739,51 @@ const App = {
         return allValid;
     },
 
-    updateRowUI(rowElement) {
-        try {
-            const category = rowElement.querySelector('.exp-category').value;
-            const commentInput = rowElement.querySelector('.exp-comment');
-            const fotWrapper = rowElement.querySelector('.fot-select-wrapper');
-            const tasksDiv = rowElement.querySelector('.fot-tasks');
-
-            if (category === 'fot') {
-                if (commentInput) commentInput.style.display = 'none';
-                if (fotWrapper) fotWrapper.style.display = 'flex';
-                if (tasksDiv) tasksDiv.style.display = 'flex';
-            } else {
-                if (commentInput) commentInput.style.display = 'block';
-                if (fotWrapper) fotWrapper.style.display = 'none';
-                if (tasksDiv) tasksDiv.style.display = 'none';
-            }
-
-            rowElement.className = 'row-category-' + (this.categories.includes(category) ? category : 'other');
-            this.validateRow(rowElement);
-            this.applyFilter();
-        } catch (e) {}
+    updateRowUI(row) {
+        if (!row) return;
+        const category = row.querySelector('.exp-category').value;
+        const comment = row.querySelector('.exp-comment');
+        const isEquipment = category === 'equipment';
+        comment.hidden = category === 'fot' || category === 'components' || isEquipment;
+        row.querySelector('.fot-select-wrapper').style.display = category === 'fot' ? 'flex' : 'none';
+        row.querySelector('.fot-tasks').style.display = category === 'fot' ? 'flex' : 'none';
+        row.querySelector('.equipment-fields').hidden = !isEquipment;
+        row.querySelector('.equipment-amount-note').hidden = !isEquipment;
+        comment.placeholder = category === 'logistics' ? 'Доставка, маршрут или перевозчик' : 'Описание / ссылка на чек';
+        row.querySelectorAll('.equipment-fields input, .equipment-fields select').forEach(input => input.disabled = !isEquipment);
+        row.querySelector('.exp-amount').readOnly = isEquipment;
+        if (isEquipment) this.updateEquipmentTotal(row);
+        else { delete row.querySelector('.exp-amount').dataset.calculationInvalid; row.querySelector('.exp-amount').setCustomValidity(''); }
+        row.className = 'row-category-' + (this.categories.includes(category) ? category : 'other');
+        this.validateRow(row); this.applyFilter();
+    },
+    getEquipmentData(row) {
+        const unit = row.querySelector('.equipment-unit').value;
+        return {unit,
+            quantity: this.getNumber(row.querySelector('.equipment-quantity').value),
+            rate: this.getNumber(row.querySelector('.equipment-rate').value),
+            hoursPerShift: unit === 'shift' ? this.getNumber(row.querySelector('.equipment-hours').value) : 0};
+    },
+    updateEquipmentTotal(row) {
+        const equipment = this.getEquipmentData(row);
+        row.querySelector('.equipment-hours-wrapper').hidden = equipment.unit !== 'shift';
+        row.querySelector('.equipment-hours').disabled = equipment.unit !== 'shift';
+        row.querySelector('.equipment-quantity-label').textContent = equipment.unit === 'shift' ? 'Количество смен' : 'Количество часов';
+        row.querySelector('.equipment-rate-label').textContent = equipment.unit === 'shift' ? 'Цена смены, ₽' : 'Цена часа, ₽';
+        const amount = row.querySelector('.exp-amount');
+        const total = this.round(equipment.quantity * equipment.rate);
+        const invalid = !Number.isFinite(total) || total > Number.MAX_SAFE_INTEGER / 100;
+        amount.dataset.calculationInvalid = invalid ? 'true' : '';
+        amount.value = invalid || !total ? '' : this.money(total);
+        amount.setCustomValidity(invalid ? 'Слишком большая сумма.' : '');
+        this.calculate();
+    },
+    changeEquipment(input) {
+        const row = input.closest('tr');
+        if (input.tagName === 'INPUT') this.formatMoneyInput({target: input});
+        this.updateEquipmentTotal(row); this.validateRow(row); this.autoSave();
     },
 
-    // ---- СМЕТА ----
     addExpenseRow(data = null) {
         try {
             const body = this.safeGetElement('expenseBody');
@@ -764,7 +800,8 @@ const App = {
             let commentText = (data && data.comment) ? data.comment : '';
             let isFotCat = (data && data.category === 'fot');
             let docsChecked = data?.docs ? 'checked' : '';
-            let category = data?.category || 'components';
+            let category = data?.category === 'logistic' ? 'logistics' : data?.category || 'components';
+            const equipment = data?.equipment || {};
 
             row.innerHTML = `
                 <td data-label="Статья и Детализация">
@@ -775,16 +812,24 @@ const App = {
                         <option value="cables" ${category === 'cables' ? 'selected' : ''}>Кабеля/коммутация</option>
                         <option value="consumables" ${category === 'consumables' ? 'selected' : ''}>Расходники (Метизы)</option>
                         <option value="fot" ${category === 'fot' ? 'selected' : ''}>ФОТ (Зарплата команды)</option>
-                        <option value="logistic" ${category === 'logistic' ? 'selected' : ''}>Спецтехника/Логистика</option>
+                        <option value="equipment" ${category === 'equipment' ? 'selected' : ''}>Спецтехника</option>
+                        <option value="logistics" ${category === 'logistics' ? 'selected' : ''}>Логистика</option>
                         <option value="agency" ${category === 'agency' ? 'selected' : ''}>Коммерческие (Агентские)</option>
                         <option value="other" ${category === 'other' ? 'selected' : ''}>Прочие накладные</option>
                     </select>
 
-                    <input type="text" class="exp-comment" placeholder="Что купили / Ссылка на чек" value="${this.escapeHTML(!isFotCat ? commentText : '')}" oninput="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();" autocomplete="off">
+                    <input type="text" class="exp-comment" placeholder="Описание / ссылка на чек" value="${this.escapeHTML(!isFotCat ? commentText : '')}" oninput="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();" autocomplete="off">
 
+                    <div class="equipment-fields" hidden>
+                        <label>Учёт<select class="equipment-unit" onchange="App.changeEquipment(this)"><option value="hour" ${equipment.unit !== 'shift' ? 'selected' : ''}>По часам</option><option value="shift" ${equipment.unit === 'shift' ? 'selected' : ''}>По сменам</option></select></label>
+                        <label><span class="equipment-quantity-label">Количество часов</span><input type="text" inputmode="decimal" class="equipment-quantity money" value="${equipment.quantity ? this.money(equipment.quantity) : ''}" placeholder="0" oninput="App.changeEquipment(this)"></label>
+                        <label><span class="equipment-rate-label">Цена часа, ₽</span><input type="text" inputmode="decimal" class="equipment-rate money" value="${equipment.rate ? this.money(equipment.rate) : ''}" placeholder="0" oninput="App.changeEquipment(this)"></label>
+                        <label class="equipment-hours-wrapper" hidden>Часов в смене<input type="text" inputmode="decimal" class="equipment-hours money" value="${equipment.hoursPerShift ? this.money(equipment.hoursPerShift) : ''}" placeholder="Необязательно" oninput="App.changeEquipment(this)"></label>
+                    </div>
                     <div class="fot-select-wrapper">
                         <select class="fot-select" onchange="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();"></select>
-                        <button class="btn btn-secondary" onclick="App.promptNewMember(this)">+</button>
+                        <button class="btn btn-secondary" type="button" title="Добавить сотрудника" aria-label="Добавить сотрудника" onclick="App.promptNewMember(this)">+</button>
+                        <button class="btn btn-danger" type="button" title="Удалить сотрудника из списка" aria-label="Удалить сотрудника из списка" onclick="App.removeMember(this)">−</button>
                     </div>
 
                     <span class="date-stamp">Записано: ${this.escapeHTML(dateStr)}</span>
@@ -798,6 +843,8 @@ const App = {
                         <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave();" value="Проект" ${isChecked('Проект')}><span>Проект</span></label>
                         <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave();" value="Кабель" ${isChecked('Кабель')}><span>Протяжка кабеля</span></label>
                         <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave();" value="Щит" ${isChecked('Щит')}><span>Сборка щита</span></label>
+                        <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave()" value="Подсобные работы" ${isChecked('Подсобные работы')}><span>Подсобные работы</span></label>
+                        <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave()" value="Погрузка/разгрузка" ${isChecked('Погрузка/разгрузка')}><span>Погрузка/разгрузка</span></label>
                     </div>
                 </td>
                 <td data-label="Оплата">
@@ -811,7 +858,7 @@ const App = {
                 </td>
                 <td data-label="Сумма (₽)">
                     <input type="text" inputmode="decimal" class="exp-amount money" value="${data && data.amount ? this.money(data.amount) : ''}" oninput="App.formatMoneyInput(event); App.validateRow(this.closest('tr')); App.autoSave();" style="margin-bottom: 0;" placeholder="0">
-                    <button class="btn btn-secondary" style="font-size:11px; padding:6px; margin-top:5px; width: 100%; border-radius: 4px;" onclick="App.suggestAmount(this)">💡 Подставить среднюю</button>
+                    <small class="equipment-amount-note" hidden>Количество × цена · считается автоматически</small>
                 </td>
                 <td data-label="Документы" class="td-center">
                     <input type="checkbox" class="exp-docs docs-check" onchange="App.calculate(); App.autoSave();" ${docsChecked}>
@@ -830,7 +877,7 @@ const App = {
                 const sel = row.querySelector('.fot-select');
                 if (sel) {
                     if (!Array.from(sel.options).some(option => option.value === commentText)) {
-                        const option = document.createElement('option'); option.value = commentText; option.textContent = commentText; sel.appendChild(option);
+                        const option = document.createElement('option'); option.value = commentText; option.textContent = commentText + (this.isRemovedMember(commentText) ? ' (удалён из списка)' : ''); sel.appendChild(option);
                     }
                     sel.value = commentText;
                 }
@@ -853,25 +900,9 @@ const App = {
             tasks: Array.from(row.querySelectorAll('.task-cb:checked')).map(cb => cb.value),
             date: new Date().toLocaleDateString('ru-RU') + ', ' + new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit'})
         };
+        if (data.category === 'equipment') data.equipment = this.getEquipmentData(row);
         this.addExpenseRow(data);
         this.autoSave();
-    },
-
-    suggestAmount(btn) {
-        const row = btn.closest('tr');
-        if (!row) return;
-        const category = row.querySelector('.exp-category').value;
-        const history = this.getAmountHistory();
-        if (history[category] && history[category].length > 0) {
-            const avg = history[category].reduce((a,b) => a + b, 0) / history[category].length;
-            const amountInput = row.querySelector('.exp-amount');
-            amountInput.value = this.money(this.round(avg));
-            this.formatMoneyInput({ target: amountInput });
-            this.validateRow(row);
-            this.autoSave();
-        } else {
-            alert('Сначала сохраните несколько расходов в этой категории, для расчёта средней суммы.');
-        }
     },
 
     getAmountHistory() {
@@ -1046,7 +1077,7 @@ const App = {
             const catNames = {
                 'components': 'Комплектующие (LED)', 'materials': 'Материалы (Металл)', 'power_board': 'РаспредЩит',
                 'cables': 'Кабеля/коммутация', 'consumables': 'Расходники (Метизы)', 'fot': 'ФОТ (Зарплата)',
-                'logistic': 'Спецтехника/Логистика', 'agency': 'Коммерческие', 'other': 'Прочие накладные'
+                'equipment': 'Спецтехника', 'logistics': 'Логистика', 'agency': 'Коммерческие', 'other': 'Прочие накладные'
             };
 
             for (let cat in sums) {
@@ -1095,8 +1126,9 @@ const App = {
     },
     validateMoneyFields() {
         return Array.from(document.querySelectorAll('input.money')).every(input => {
+            if (input.disabled) { input.setCustomValidity(''); input.classList.remove('error-field'); return true; }
             const raw = input.value.replace(/[\s\u00a0\u202f₽]/g, '').replace(',', '.');
-            const valid = /^\d*(?:\.\d{0,2})?$/.test(raw) && (!raw || Number(raw) <= Number.MAX_SAFE_INTEGER / 100);
+            const valid = /^\d*(?:\.\d{0,2})?$/.test(raw) && (!raw || Number(raw) <= Number.MAX_SAFE_INTEGER / 100) && input.dataset.calculationInvalid !== 'true' && (!input.classList.contains('equipment-hours') || !raw || (Number(raw) > 0 && Number(raw) <= 24));
             input.setCustomValidity(valid ? '' : 'Проверь сумму: положительное число с копейками.');
             input.classList.toggle('error-field', !valid);
             return valid;
@@ -1216,7 +1248,7 @@ const App = {
                 if (!current.name) current.name = 'Черновик';
                 projects[this.currentProjectId] = this.mergeProject(projects[this.currentProjectId], current);
             }
-            const data = {schemaVersion: 2, exportedAt: this.stamp(), projects, team: this.getTeamList()};
+            const data = {schemaVersion: 3, exportedAt: this.stamp(), projects, ...this.teamBackup()};
             this.downloadFile(JSON.stringify(data, null, 2), 'application/json', 'Главбух_Бэкап_' + new Date().toLocaleDateString('sv-SE') + '.json');
         } catch (error) {
             // Preserve even corrupted storage verbatim instead of exporting an empty database.
@@ -1228,7 +1260,7 @@ const App = {
     normalizeBackup(data) {
         const object = value => value && typeof value === 'object' && !Array.isArray(value);
         const safeKey = key => !['__proto__', 'constructor', 'prototype'].includes(key);
-        if (!object(data) || !object(data.projects) || (data.schemaVersion != null && ![1, 2].includes(data.schemaVersion))) throw new Error('Неподдерживаемый формат базы.');
+        if (!object(data) || !object(data.projects) || (data.schemaVersion != null && ![1, 2, 3].includes(data.schemaVersion))) throw new Error('Неподдерживаемый формат базы.');
         if (data.team != null && (!Array.isArray(data.team) || data.team.some(name => typeof name !== 'string' || name.length > 300))) throw new Error('Неверный список сотрудников.');
         const projects = Object.create(null);
         const timestamp = this.stamp();
@@ -1249,7 +1281,7 @@ const App = {
                 else if (field === 'tax_system') { if (!['usn6','usn15','usn6_nds5','usn15_nds5','osno'].includes(value)) throw new Error('Неверный режим расчёта.'); project[field] = value; }
                 else project[field] = String(money(value));
                 const time = source.fieldTimes?.[field];
-                project.fieldTimes[field] = validTime(time) ? time : (data.schemaVersion === 2 ? 0 : timestamp);
+                project.fieldTimes[field] = validTime(time) ? time : ([2, 3].includes(data.schemaVersion) ? 0 : timestamp);
             }
             if (source.deletedAt != null) { if (!validTime(source.deletedAt)) throw new Error('Неверная дата удаления.'); project.deletedAt = source.deletedAt; }
             if (source.deletedExpenses != null) {
@@ -1269,12 +1301,28 @@ const App = {
                 if (expense.docs != null && typeof expense.docs !== 'boolean') throw new Error('Неверная отметка документа.');
                 const tasks = expense.tasks ?? [];
                 if (!Array.isArray(tasks) || tasks.some(task => typeof task !== 'string' || task.length > 300)) throw new Error('Неверный список работ.');
-                project.expenses.push({uuid, date: expense.date || '', category: expense.category, comment: expense.comment, pay: expense.pay, amount: money(expense.amount), docs: !!expense.docs, tasks,
-                    updatedAt: validTime(expense.updatedAt) ? expense.updatedAt : (data.schemaVersion === 2 ? 0 : timestamp)});
+                let equipment;
+                if (expense.category === 'equipment') {
+                    if (!object(expense.equipment) || !['hour','shift'].includes(expense.equipment.unit)) throw new Error('Неверный расчёт спецтехники.');
+                    equipment = {unit: expense.equipment.unit, quantity: money(expense.equipment.quantity), rate: money(expense.equipment.rate), hoursPerShift: money(expense.equipment.hoursPerShift ?? 0)};
+                    if (equipment.hoursPerShift > 24 || this.round(equipment.quantity * equipment.rate) !== money(expense.amount)) throw new Error('Сумма спецтехники не соответствует количеству и ставке.');
+                }
+                project.expenses.push({uuid, date: expense.date || '', category: expense.category, comment: expense.comment, pay: expense.pay, amount: money(expense.amount), docs: !!expense.docs, tasks, ...(equipment ? {equipment} : {}),
+                    updatedAt: validTime(expense.updatedAt) ? expense.updatedAt : ([2, 3].includes(data.schemaVersion) ? 0 : timestamp)});
             });
             projects[id] = project;
         }
-        return {projects, team: data.team || []};
+        const teamMap = field => {
+            const source = data[field] ?? {};
+            if (!object(source)) throw new Error('Неверные изменения списка сотрудников.');
+            const result = Object.create(null);
+            for (const [name, time] of Object.entries(source)) {
+                if (!safeKey(name) || !name.trim() || name.length > 300 || !validTime(time)) throw new Error('Неверная запись сотрудника.');
+                result[name] = time;
+            }
+            return result;
+        };
+        return {projects, team: data.team || [], teamRemoved: teamMap('teamRemoved'), teamTimes: teamMap('teamTimes')};
     },
 
     importBackup(event) {
@@ -1288,10 +1336,15 @@ const App = {
                 const raw = JSON.parse(event.target.result);
                 const imported = this.normalizeBackup(raw);
                 const projects = this.readProjects();
-                if (Object.keys(projects).length && raw.schemaVersion !== 2 && !confirm('Это файл старой версии. Совпадающие поля и расходы будут обновлены значениями из файла. Прежняя база сохранится в резервной копии. Продолжить?')) return;
+                if (Object.keys(projects).length && ![2, 3].includes(raw.schemaVersion) && !confirm('Это файл старой версии. Совпадающие поля и расходы будут обновлены значениями из файла. Прежняя база сохранится в резервной копии. Продолжить?')) return;
                 StorageService.set('ledRecovery', JSON.stringify(projects));
                 for (const [id, project] of Object.entries(imported.projects)) projects[id] = this.mergeProject(projects[id], project);
                 const team = [...new Set([...this.getTeamList(), ...imported.team])];
+                for (const [key, incoming] of [['ledTeamRemoved', imported.teamRemoved], ['ledTeamTimes', imported.teamTimes]]) {
+                    const merged = this.getTeamMap(key);
+                    for (const [name, time] of Object.entries(incoming)) merged[name] = Math.max(merged[name] || 0, time);
+                    StorageService.set(key, JSON.stringify(merged));
+                }
                 StorageService.set('ledTeam', JSON.stringify(team));
                 StorageService.set('ledProjects', JSON.stringify(projects));
                 const active = projects[this.currentProjectId];
@@ -1315,9 +1368,9 @@ const App = {
             const projects = this.readProjects();
             const current = this.collectProject();
             const selected = current.name || current.expenses.length ? [current] : Object.values(projects).filter(project => !project.deletedAt);
-            const lines = [['Проект','Дата','Категория','Детали/ФИО','Способ оплаты','Сумма','Чек/Акт','Задачи (ФОТ)']];
+            const lines = [['Проект','Дата','Категория','Детали/ФИО','Способ оплаты','Сумма','Чек/Акт','Задачи (ФОТ)','Ед. учёта','Количество','Цена единицы','Часов в смене']];
             for (const project of selected) for (const expense of project.expenses || []) {
-                lines.push([project.name || 'Черновик', expense.date, expense.category, expense.comment, expense.pay, this.getNumber(expense.amount).toFixed(2).replace('.', ','), expense.docs ? 'Да' : 'Нет', (expense.tasks || []).join(', ')]);
+                lines.push([project.name || 'Черновик', expense.date, expense.category, expense.comment, expense.pay, this.getNumber(expense.amount).toFixed(2).replace('.', ','), expense.docs ? 'Да' : 'Нет', (expense.tasks || []).join(', '), expense.equipment ? (expense.equipment.unit === 'shift' ? 'смена' : 'час') : '', expense.equipment ? String(expense.equipment.quantity).replace('.', ',') : '', expense.equipment ? expense.equipment.rate.toFixed(2).replace('.', ',') : '', expense.equipment?.hoursPerShift ? String(expense.equipment.hoursPerShift).replace('.', ',') : '']);
             }
             this.downloadFile('\uFEFF' + lines.map(line => line.map(value => this.csvCell(value)).join(';')).join('\r\n'), 'text/csv;charset=utf-8;', 'Затраты_' + new Date().toLocaleDateString('sv-SE') + '.csv');
         } catch (error) { this.showError(error); alert('Не удалось выгрузить таблицу: ' + error.message); }
@@ -1344,7 +1397,7 @@ const App = {
         try {
             StorageService.set('ledRecovery', StorageService.get('ledProjects') || '{}');
             StorageService.set('ledProjects', '{}');
-            for (const key of ['ledTeam', 'amountHistory', 'ledDraft', 'ledLastProject']) StorageService.del(key);
+            for (const key of ['ledTeam', 'ledTeamRemoved', 'ledTeamTimes', 'amountHistory', 'ledDraft', 'ledLastProject']) StorageService.del(key);
             this.isDirty = false; this.clearProject(); this.loadTeamList(); this.updateProjectList();
         } catch (error) { this.showError(error); alert('Не удалось очистить базу: ' + error.message); }
     },

@@ -1,9 +1,9 @@
 {
   "name": "smeta-expense-tracker",
-  "version": "8.1.0",
+  "version": "8.2.0",
   "private": true,
   "scripts": {
-    "test": "node tests/regression.cjs && node tests/pwa.cjs",
+    "test": "node tests/regression.cjs && node tests/pwa.cjs && node tests/feedback.cjs",
     "test:android": "node tests/android.cjs"
   },
   "devDependencies": {

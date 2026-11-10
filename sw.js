@@ -1,7 +1,7 @@
 'use strict';
 const BASE = new URL('./', self.location.href);
 const PREFIX = 'smeta-ledger-shell:' + BASE.pathname + ':';
-const CACHE = PREFIX + '8.1.0';
+const CACHE = PREFIX + '8.2.0';
 const SHELL = new URL('index.html', BASE).href;
 const ASSETS = ['index.html', 'pwa.js', 'manifest.webmanifest',
     'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png']

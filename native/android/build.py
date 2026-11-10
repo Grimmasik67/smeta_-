@@ -48,5 +48,5 @@ if not store.exists():
  run([jdk/'bin/keytool','-genkeypair','-keystore',store,'-storetype','PKCS12','-storepass:env','ZATRATY_SIGN_PASSWORD','-keypass:env','ZATRATY_SIGN_PASSWORD','-alias','zatraty','-keyalg','RSA','-keysize','3072','-validity','10000','-dname','CN=Zatraty Local Release'],env=env)
  store.chmod(0o600)
 run([javac,'-classpath',tools/'apksig.jar','-d',build,source/'SignApk.java'])
-run([java,'-cp',str(build)+os.pathsep+str(tools/'apksig.jar'),'SignApk',store,build/'unsigned.apk',build/'Zatraty-8.1.1.apk'],env=env)
-print('APK:',build/'Zatraty-8.1.1.apk')
+run([java,'-cp',str(build)+os.pathsep+str(tools/'apksig.jar'),'SignApk',store,build/'unsigned.apk',build/'Zatraty-8.2.0.apk'],env=env)
+print('APK:',build/'Zatraty-8.2.0.apk')

@@ -24,7 +24,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
  await test('Чистый запуск без ошибок',async()=>{assert.deepEqual(errors,[]);assert.equal(await page.locator('#expenseBody tr').count(),1);assert.equal(await page.locator('#revenueFact').inputValue(),'0')});
  await test('Денежный ввод сохраняет копейки',async()=>{
   await page.locator('#projectName').fill('Объект «А»');
-  await page.locator('.exp-comment').fill('Кабель "ВВГ" <50 м>');
+  await page.locator('.exp-category').selectOption('cables');await page.locator('.exp-comment').fill('Кабель "ВВГ" <50 м>');
   await page.locator('.exp-amount').fill('1 234,56');
   assert.equal(await evalApp(()=>App.getNumber(document.querySelector('.exp-amount').value)),1234.56);
   assert.equal(await evalApp(()=>Object.values(App.readProjects())[0].expenses[0].amount),1234.56);
@@ -66,7 +66,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
  });
  await test('Средняя сумма не дублирует расходы при сохранениях',async()=>{
   await evalApp(()=>{App.saveProject(true);App.saveProject(true)});
-  assert.deepEqual(await evalApp(()=>App.getAmountHistory().components),[200.75]);
+  assert.deepEqual(await evalApp(()=>App.getAmountHistory().cables),[200.75]);
  });
  await test('Новая пустая строка не попадает в базу',async()=>{
   await evalApp(()=>{App.addExpenseRow();App.autoSave()});
@@ -135,11 +135,11 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   const csv=fs.readFileSync(await download.path(),'utf8');assert.ok(csv.includes('"12,34"')||csv.includes('"99,99"'));
  });
  await test('Черновик без названия восстанавливается после перезапуска',async()=>{
-  await evalApp(()=>{App.isDirty=false;App.clearProject()});await page.locator('.exp-comment').fill('Черновой расход');await page.locator('.exp-amount').fill('45,67');
+  await evalApp(()=>{App.isDirty=false;App.clearProject()});await page.locator('.exp-category').selectOption('cables');await page.locator('.exp-comment').fill('Черновой расход');await page.locator('.exp-amount').fill('45,67');
   await page.reload();assert.equal(await page.locator('.exp-comment').inputValue(),'Черновой расход');assert.equal(await evalApp(()=>App.getNumber(document.querySelector('.exp-amount').value)),45.67);
  });
  await test('Старая ссылка открывает исправленную версию',async()=>{
-  await page.goto(base+'/old');await page.waitForURL(base+'/index.html');assert.ok((await page.title()).includes('v8.1'));
+  await page.goto(base+'/old');await page.waitForURL(base+'/index.html');assert.ok((await page.title()).includes('v8.2'));
  });
  await test('Мобильная ширина без горизонтального выхода страницы',async()=>{
   await page.setViewportSize({width:390,height:844});assert.equal(await evalApp(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -168,7 +168,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   assert.equal(await page.locator('#savedProjects option[value="randomold"]').count(),1);
  });
  await test('Новый объект не стирает неназванный черновик',async()=>{
-  await page.locator('.exp-comment').fill('Не потерять черновик');await page.locator('.exp-amount').fill('0,01');
+  await page.locator('.exp-category').selectOption('cables');await page.locator('.exp-comment').fill('Не потерять черновик');await page.locator('.exp-amount').fill('0,01');
   await evalApp(()=>App.clearProject());
   assert.ok(await evalApp(()=>Object.values(App.readProjects()).some(p=>p.expenses.some(e=>e.comment==='Не потерять черновик'&&e.amount===0.01))));
  });

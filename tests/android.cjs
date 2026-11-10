@@ -15,7 +15,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const test=async(name,fn)=>{await fn();tests.push(name);console.log('PASS',name)};
   await page.goto(base);
   await test('Встроенная версия запускается без веб-установки',async()=>{assert.equal(await page.locator('#installHelp').isVisible(),false);assert.ok((await page.locator('#appConnectionStatus').innerText()).includes('Работает без интернета'));assert.equal(await page.locator('script[src="./pwa.js"]').count(),0)});
-  await page.locator('#projectName').fill('Android тест');await page.locator('.exp-comment').fill('Кабель «ВВГ»');await page.locator('.exp-amount').fill('123,45');
+  await page.locator('#projectName').fill('Android тест');await page.locator('.exp-category').selectOption('cables');await page.locator('.exp-comment').fill('Кабель «ВВГ»');await page.locator('.exp-amount').fill('123,45');
   await test('JSON передаётся системному сохранению без потери кириллицы и копеек',async()=>{
    await page.evaluate(()=>App.exportBackup());const file=await page.evaluate(()=>nativeFiles[0]);const data=JSON.parse(file.content);assert.equal(file.type,'application/json');assert.ok(Object.values(data.projects).some(p=>p.expenses[0]?.comment==='Кабель «ВВГ»'&&p.expenses[0].amount===123.45));await page.evaluate(()=>NativeExportFinished(true));
   });
@@ -27,7 +27,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await test('Очистка происходит только после подтверждённого сохранения',async()=>{
    await page.evaluate(()=>{window.operation=App.hardReset()});await page.waitForFunction(()=>nativeFiles.length===4);await page.evaluate(async()=>{NativeExportFinished(true);await operation});assert.equal(await page.evaluate(()=>localStorage.getItem('ledProjects')),'{}');assert.equal(await page.evaluate(()=>localStorage.getItem('ledRecovery')),backup);
   });
-  await page.locator('#projectName').fill('Новый объект');await page.locator('.exp-comment').fill('Новая запись');await page.locator('.exp-amount').fill('200');
+  await page.locator('#projectName').fill('Новый объект');await page.locator('.exp-category').selectOption('cables');await page.locator('.exp-comment').fill('Новая запись');await page.locator('.exp-amount').fill('200');
   const current=await page.evaluate(()=>localStorage.getItem('ledProjects'));
   await test('Отмена выгрузки перед восстановлением сохраняет текущую базу',async()=>{
    await page.evaluate(()=>{window.operation=App.restoreRecovery()});await page.waitForFunction(()=>nativeFiles.length===5);await page.evaluate(async()=>{NativeExportFinished(false);await operation});assert.equal(await page.evaluate(()=>localStorage.getItem('ledProjects')),current);

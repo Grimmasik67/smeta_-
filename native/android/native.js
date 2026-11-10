@@ -19,7 +19,7 @@
             if (!current.name) current.name = 'Черновик';
             projects[App.currentProjectId] = App.mergeProject(projects[App.currentProjectId], current);
         }
-        return App.downloadFile(JSON.stringify({schemaVersion:2, exportedAt:App.stamp(), projects, team:App.getTeamList()}, null, 2), 'application/json', 'Затраты_Бэкап.json');
+        return App.downloadFile(JSON.stringify({schemaVersion:3, exportedAt:App.stamp(), projects, ...App.teamBackup()}, null, 2), 'application/json', 'Затраты_Бэкап.json');
     };
     App.hardReset = async () => {
         if (!confirm('Очистить базу? Сначала выбери, куда сохранить резервную копию.')) return;
@@ -27,7 +27,7 @@
             if (!await saveCurrent()) return;
             StorageService.set('ledRecovery', StorageService.get('ledProjects') || '{}');
             StorageService.set('ledProjects', '{}');
-            for (const key of ['ledTeam','amountHistory','ledDraft','ledLastProject']) StorageService.del(key);
+            for (const key of ['ledTeam','ledTeamRemoved','ledTeamTimes','amountHistory','ledDraft','ledLastProject']) StorageService.del(key);
             App.isDirty = false; App.clearProject(); App.loadTeamList(); App.updateProjectList();
         } catch (error) { App.showError(error); alert('Не удалось очистить базу: ' + error.message); }
     };
