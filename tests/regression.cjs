@@ -1,11 +1,11 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
+const createStaticServer = require('./server.cjs');
 const path = require('node:path');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 (async () => {
  const root = path.resolve(__dirname, '..');
- const server = http.createServer((req,res) => {const file = req.url.startsWith('/old') ? 'БухУчет_Тест.html' : 'index.html';res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fs.readFileSync(path.join(root,file)));});
+ const server = createStaticServer(root);
  await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
  const base = `http://127.0.0.1:${server.address().port}`;
  const results = [];
@@ -139,7 +139,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   await page.reload();assert.equal(await page.locator('.exp-comment').inputValue(),'Черновой расход');assert.equal(await evalApp(()=>App.getNumber(document.querySelector('.exp-amount').value)),45.67);
  });
  await test('Старая ссылка открывает исправленную версию',async()=>{
-  await page.goto(base+'/old');await page.waitForURL(base+'/index.html');assert.ok((await page.title()).includes('v8.0'));
+  await page.goto(base+'/old');await page.waitForURL(base+'/index.html');assert.ok((await page.title()).includes('v8.1'));
  });
  await test('Мобильная ширина без горизонтального выхода страницы',async()=>{
   await page.setViewportSize({width:390,height:844});assert.equal(await evalApp(()=>document.documentElement.scrollWidth<=innerWidth),true);
