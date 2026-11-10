@@ -1,0 +1,18 @@
+{
+  "aapt2": {
+    "version": "9.5.1-16666295",
+    "sha256": "7829dec6a3629bc2956cb531ad6e3f1940e74191b4aa35152f5ddb55652d0f3b"
+  },
+  "android-all.jar": {
+    "version": "15-robolectric-14663667-2",
+    "sha256": "34ffc4b2ab328bb255d5e4752a20d50f815a739dbe4340b6819057b2f56cc132"
+  },
+  "r8.jar": {
+    "version": "9.5.29",
+    "sha256": "f8c762ff84640b10083b934a47278758a7665977e618fab0c927fff00521dea3"
+  },
+  "apksig.jar": {
+    "version": "9.5.1",
+    "sha256": "7ae2e5980c77d853e3513074ee7c822bbdcdcde1668889d17faa7fe8bc8aa821"
+  }
+}

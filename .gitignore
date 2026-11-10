@@ -1,3 +1,6 @@
 node_modules/
 .test-results/
 .DS_Store
+native/android/build/
+*.p12
+*.jks
