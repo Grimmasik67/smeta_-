@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Главбух PRO 2026 – v7.1 Enterprise</title>
+    <title>Главбух PRO 2026 – v8.0</title>
     <style>
         :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #e74c3c; --warning: #f39c12; --bg: #f4f7f6; --surface: #ffffff; }
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: var(--bg); color: #333; -webkit-font-smoothing: antialiased; padding-bottom: 80px; /* Отступ для плавающей кнопки */ }
         .container { max-width: 1250px; margin: 20px auto; background: var(--surface); padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         h1, h2 { color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-top: 0; }
-        
+
         #iosWarning { display: none; background: var(--danger); color: white; padding: 12px; text-align: center; font-size: 13px; font-weight: bold; border-radius: 8px; margin-bottom: 15px; }
         #saveIndicator { opacity: 0; transition: opacity 0.3s ease; background: var(--success); color: white; padding: 6px 14px; border-radius: 30px; font-size: 13px; font-weight: 600; margin-left: auto; pointer-events: none;}
-        
+
         .sync-guide { background: #eaf2f8; border-left: 5px solid var(--accent); padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; display: flex; flex-direction: column; gap: 6px;}
         .sync-guide strong { color: var(--primary); }
-        
+
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--primary); border-radius: 12px; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; position: sticky; top: 10px; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.15);}
         .top-bar h1 { color: white; border: none; padding: 0; margin: 0; font-size: 20px; }
         .top-bar .btn-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center;}
-        
+
         .btn { background: var(--accent); color: white; border: none; font-weight: bold; font-size: 14px; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center;}
         .btn:hover { filter: brightness(0.9); }
         .btn-success { background: var(--success); }
@@ -28,25 +28,25 @@
         .btn-warning { background: var(--warning); }
         .btn-secondary { background: #7f8c8d; }
         .btn-delete-row { background: var(--danger); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; min-height: 44px;}
-        
+
         /* ПЛАВАЮЩАЯ КНОПКА СОХРАНЕНИЯ (НОВОЕ) */
         .fab-save { position: fixed; bottom: 30px; right: 30px; background-color: var(--success); color: white; border: none; border-radius: 50px; padding: 15px 30px; font-size: 16px; font-weight: bold; box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4); cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; gap: 8px;}
         .fab-save:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(39, 174, 96, 0.5); }
         .fab-save:active { transform: translateY(1px); }
-        
+
         .header-controls { display: flex; justify-content: space-between; align-items: flex-end; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px; gap: 20px; border: 1px solid #eee; flex-wrap: wrap; }
         .header-controls > div { flex: 1; min-width: 200px; }
-        
+
         .row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 180px; }
         label { font-weight: 600; display: block; margin-bottom: 6px; color: #555; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
+
         input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; font-size: 16px; background-color: #fdfdfd; min-height: 44px;}
         input:focus, select:focus { outline: none; border-color: var(--accent); }
         input.money { text-align: right; font-weight: 700; letter-spacing: 1px; color: var(--primary); font-size: 18px; }
         .error-field { border: 2px solid var(--danger) !important; background-color: #fadbd8 !important; }
         .debt-label { font-size: 13px; color: var(--danger); margin-top: 8px; display: block; font-weight: bold; }
-        
+
         .budget-tracker { margin-top: 25px; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
         .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: var(--primary);}
         .progress-bar-bg { width: 100%; height: 16px; background: #ecf0f1; border-radius: 10px; overflow: hidden; }
@@ -58,7 +58,7 @@
         th, td { padding: 12px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid #eee; }
         th { background-color: var(--primary); color: white; font-size: 14px; }
         th:first-child { border-top-left-radius: 8px; } th:last-child { border-top-right-radius: 8px; }
-        
+
         tr.row-category-components { background-color: #f0f8ff !important; }
         tr.row-category-components td:first-child { border-left: 4px solid #3498db; }
         tr.row-category-materials { background-color: #f0fdf4 !important; }
@@ -82,12 +82,12 @@
         .task-chip input { display: none; }
         .task-chip span { display: inline-block; padding: 8px 14px; background: #fff; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid #bdc3c7; color: #555; cursor: pointer; }
         .task-chip input:checked + span { background: var(--accent); color: white; border-color: var(--accent); }
-        
+
         .date-stamp { font-size: 11px; color: #95a5a6; margin-top: 6px; display: block; font-weight: 500;}
         .alert { padding: 16px; margin-bottom: 15px; border-radius: 8px; font-size: 14px; border-left: 5px solid; }
         .alert-red { background-color: #fdf2f1; color: #c0392b; border-color: var(--danger); }
         .alert-yellow { background-color: #fef9e7; color: #d35400; border-color: var(--warning); }
-        
+
         .metrics-panel { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
         .metric-card { flex: 1; min-width: 150px; padding: 20px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; }
         .metric-card span { font-size: 26px; font-weight: 800; }
@@ -97,11 +97,11 @@
         .metric-margin { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; transition: 0.3s;}
         .margin-ok { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
         .margin-bad { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
-        
+
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); overflow-y: auto; backdrop-filter: blur(3px);}
         .modal-content { background: var(--surface); margin: 3% auto; padding: 30px; width: 95%; max-width: 1300px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
         .close-modal { color: #aaa; float: right; font-size: 32px; font-weight: bold; cursor: pointer; line-height: 1; padding: 5px;}
-        
+
         .dash-wrapper { overflow-x: auto; }
         .dash-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .dash-table th, .dash-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: right; }
@@ -110,17 +110,17 @@
         .debt-alert { color: var(--danger); font-weight: 800; background: #fef2f2; }
         .dev-ok { color: var(--success); font-weight: bold; background: #f0fdf4;}
         .dev-bad { color: var(--danger); font-weight: bold; background: #fef2f2;}
-        
+
         .filter-bar { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; background: #ecf0f1; padding: 15px; border-radius: 8px;}
         .filter-bar select { width: auto; min-width: 250px; padding: 10px; margin: 0;}
         .fot-select-wrapper { display: none; gap: 8px; align-items: center; margin-bottom: 0; }
         .fot-select-wrapper select { flex: 1; margin-bottom: 0; }
         .fot-select-wrapper .btn { flex-shrink: 0; padding: 0 15px; height: 44px; }
-        
+
         /* ИСПРАВЛЕННЫЙ СТИЛЬ ЧЕКБОКСА (НОВОЕ) */
         td .docs-check { width: 24px; height: 24px; cursor: pointer; margin: 0 auto; display: block; accent-color: var(--accent); }
         .td-center { text-align: center; vertical-align: middle !important;}
-        
+
         .category-summary { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-top: 15px; display: none; border: 1px solid #e2e8f0; }
         .category-summary table { margin-bottom: 0; border-collapse: collapse; width: 100%; }
         .category-summary th, .category-summary td { padding: 8px 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px; }
@@ -159,22 +159,23 @@
     <div id="iosWarning">⚠️ iOS заблокировал локальное хранилище. Данные сохраняются только в памяти сессии.</div>
 
     <div class="sync-guide">
-        <strong>📋 Как работать с командой (GitHub Pages Sync):</strong>
-        <span>1. Данные сохраняются только в памяти вашего устройства.</span>
+        <strong>📋 Как передать данные коллеге:</strong>
+        <span>1. Данные сохраняются в браузере на этом устройстве.</span>
         <span>2. Чтобы передать смету, нажмите <strong>«📤 Выгрузить базу»</strong> и отправьте файл коллеге.</span>
-        <span>3. Коллега нажимает <strong>«📥 Загрузить (Sync)»</strong>, и ваши данные безопасно объединяются.</span>
+        <span>3. Коллега нажимает <strong>«📥 Загрузить базу»</strong>, и изменения объединяются. Перед импортом автоматически сохраняется копия прежней базы.</span>
     </div>
 
     <div class="top-bar">
-        <h1>ГЛАВБУХ PRO 2026</h1>
+        <h1>ГЛАВБУХ PRO · 8.0</h1>
         <div id="saveIndicator">💾 Сохранено</div>
         <div class="btn-group">
             <button class="btn btn-success" onclick="App.exportBackup()">📤 Выгрузить базу</button>
             <input type="file" id="importFile" accept=".json" style="display:none;" onchange="App.importBackup(event)">
-            <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">📥 Загрузить (Sync)</button>
+            <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">📥 Загрузить базу</button>
             <button class="btn" style="background:#9b59b6;" onclick="App.showDashboard()">📊 Сводка</button>
             <button class="btn btn-secondary" onclick="App.exportCSV()">📉 в Excel</button>
             <button class="btn btn-danger" onclick="App.hardReset()">🗑 Сброс</button>
+            <button id="undoChange" class="btn btn-secondary" style="display:none" onclick="App.restoreRecovery()">↶ Вернуть прежнюю базу</button>
         </div>
     </div>
 
@@ -194,7 +195,7 @@
     <div class="row">
         <div class="col" style="min-width: 150px;">
             <label>Сумма контракта (План):</label>
-            <input type="text" inputmode="decimal" id="revenuePlan" class="money" value="1 200 000" oninput="App.formatMoneyInput(event); App.autoSave();">
+            <input type="text" inputmode="decimal" id="revenuePlan" class="money" value="0" oninput="App.formatMoneyInput(event); App.autoSave();">
         </div>
         <div class="col" style="min-width: 200px; background:#e8f8f5; padding:12px; border-radius:8px; border:1px solid #1abc9c;">
             <label style="color:#16a085; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -203,23 +204,23 @@
                     <input type="number" id="advancePercent" style="width: 55px; padding: 2px 4px; min-height: 24px; text-align: center; border: 1px solid #bdc3c7; border-radius: 4px;" min="0" max="100" placeholder="%" oninput="App.calculateAdvanceFromPercent()"> %
                 </span>
             </label>
-            <input type="text" inputmode="decimal" id="revenueFact" class="money" value="600 000" style="margin-bottom: 0;" oninput="App.formatMoneyInput(event); App.updateAdvancePercent(); App.autoSave();">
-            <span id="debtLabel" class="debt-label">Дебиторка: 600 000 ₽</span>
+            <input type="text" inputmode="decimal" id="revenueFact" class="money" value="0" style="margin-bottom: 0;" oninput="App.formatMoneyInput(event); App.updateAdvancePercent(); App.autoSave();">
+            <span id="debtLabel" class="debt-label">Дебиторка: 0 ₽</span>
         </div>
-        
+
         <div class="col" style="min-width: 150px; background:#fff5f0; padding:12px; border-radius:8px; border:1px solid #e67e22;">
             <label style="color:#d35400;">Лимит расходов (Бюджет):</label>
-            <input type="text" inputmode="decimal" id="expensePlan" class="money" value="700 000" oninput="App.formatMoneyInput(event); App.autoSave();">
+            <input type="text" inputmode="decimal" id="expensePlan" class="money" value="0" oninput="App.formatMoneyInput(event); App.autoSave();">
         </div>
 
         <div class="col" style="flex: 1.5; min-width: 200px;">
-            <label>Налог. система (2026):</label>
+            <label>Расчётный режим:</label>
             <select id="tax_system" onchange="App.calculate(); App.autoSave();">
-                <option value="usn6">УСН 6% (до 20 млн)</option>
-                <option value="usn15">УСН 15% (до 20 млн)</option>
-                <option value="usn6_nds5">УСН 6% + НДС 5% (> 20 млн)</option>
-                <option value="usn15_nds5">УСН 15% + НДС 5% (> 20 млн)</option>
-                <option value="osno">ОСНО (НДС 22% + Прибыль 25%)</option>
+                <option value="usn6">УСН 6%</option>
+                <option value="usn15">УСН 15%</option>
+                <option value="usn6_nds5">УСН 6% + НДС 5%</option>
+                <option value="usn15_nds5">УСН 15% + НДС 5%</option>
+                <option value="osno">ОСНО ООО (НДС 22% + прибыль 25%)</option>
             </select>
         </div>
         <div class="col" style="min-width: 100px;">
@@ -227,8 +228,8 @@
             <input type="number" inputmode="decimal" id="targetMargin" value="35" min="0" oninput="this.value = Math.abs(this.value); App.calculate(); App.autoSave();">
         </div>
         <div class="col" style="min-width: 100px;">
-            <label>Обнал (%):</label>
-            <input type="number" inputmode="decimal" id="cashFee" value="10" min="0" oninput="this.value = Math.abs(this.value); App.calculate(); App.autoSave();">
+            <label>Резерв комиссии (% наличных):</label>
+            <input type="number" inputmode="decimal" id="cashFee" value="0" min="0" oninput="this.value = Math.abs(this.value); App.calculate(); App.autoSave();">
         </div>
     </div>
 
@@ -260,7 +261,7 @@
         <span style="font-size:14px; font-weight: 600; color:var(--primary);">Показано: <span id="rowCount">0</span> строк</span>
         <button class="btn btn-secondary" onclick="App.toggleCategorySummary()">📊 Итоги по категориям</button>
     </div>
-    
+
     <div id="categorySummary" class="category-summary">
         <h3 style="margin:0 0 10px 0; font-size:15px; color:var(--primary);">📊 Итоги по категориям расходов</h3>
         <table class="cat-summary-table">
@@ -270,12 +271,12 @@
             <tbody id="categorySummaryBody"></tbody>
         </table>
     </div>
-    
+
     <table id="expensesTable">
         <thead>
             <tr>
                 <th style="width:32%;">Статья и Детализация</th>
-                <th style="width:23%;">Способ оплаты (115-ФЗ)</th>
+                <th style="width:23%;">Способ оплаты</th>
                 <th style="width:22%;">Сумма (руб.)</th>
                 <th style="text-align:center;width:10%;">Акт/Чек</th>
                 <th style="text-align:center;width:13%;">Действия</th>
@@ -283,16 +284,16 @@
         </thead>
         <tbody id="expenseBody"></tbody>
     </table>
-    <button class="btn" style="width:100%; padding:18px; font-size:16px; margin-bottom:10px; box-shadow: 0 4px 15px rgba(52,152,219,0.3);" onclick="App.addExpenseRow()">+ ДОБАВИТЬ РАСХОД</button>
+    <button class="btn" style="width:100%; padding:18px; font-size:16px; margin-bottom:10px; box-shadow: 0 4px 15px rgba(52,152,219,0.3);" onclick="App.addExpenseRow(); App.autoSave()">+ ДОБАВИТЬ РАСХОД</button>
 
-    <div id="alertsContainer"></div>
+    <div id="alertsContainer"></div><p style="color:#666;font-size:13px">Налоги и комиссии — расчётный резерв. Остаток денег считается по введённым платежам. Этот расчёт не заменяет бухгалтерский учёт.</p>
 
-    <h2>Юнит-экономика проекта</h2>
+    <h2>Итоги проекта</h2>
     <div class="metrics-panel">
         <div class="metric-card metric-margin" id="marginCard"><span>Маржинальность</span><span id="marginPercent">0 %</span></div>
-        <div class="metric-card metric-profit"><span>План. Прибыль</span><span id="netProfit">0 ₽</span></div>
-        <div class="metric-card metric-cash"><span>Кэшфлоу (Факт)</span><span id="realCash">0 ₽</span></div>
-        <div class="metric-card metric-tax"><span>Налог (с факта)</span><span id="taxAmount">0 ₽</span></div>
+        <div class="metric-card metric-profit"><span>Прибыль после резерва</span><span id="netProfit">0 ₽</span></div>
+        <div class="metric-card metric-cash"><span>Остаток денег</span><span id="realCash">0 ₽</span></div>
+        <div class="metric-card metric-tax"><span>Резерв на налоги</span><span id="taxAmount">0 ₽</span></div>
     </div>
 </div>
 
@@ -314,7 +315,7 @@
                     <th>Лимит Расходов</th>
                     <th>Факт Расходов</th>
                     <th>Остаток Лимита</th>
-                    <th>Налоги</th>
+                    <th>Резерв на налоги</th>
                     <th>В кассе</th>
                 </tr></thead>
                 <tbody id="dashBody"></tbody>
@@ -338,33 +339,40 @@
 
 <script>
 const StorageService = {
-    _memory: {},
-    _useLocalStorage: true,
+    _memory: Object.create(null),
     init() {
         try {
-            let test = '__test__';
-            window.localStorage.setItem(test, test);
-            window.localStorage.removeItem(test);
-        } catch (e) {
-            this._useLocalStorage = false;
-            const w = document.getElementById('iosWarning');
-            if (w) w.style.display = 'block';
+            window.localStorage.setItem('__ledger_test__', 'ok');
+            window.localStorage.removeItem('__ledger_test__');
+        } catch (error) { this.warn(); }
+    },
+    warn() {
+        const el = document.getElementById('iosWarning');
+        if (el) {
+            el.textContent = 'Не удалось записать данные на устройстве. Не закрывайте страницу: нажмите «Выгрузить базу», чтобы сохранить файл.';
+            el.style.display = 'block';
         }
     },
     get(key) {
-        if (this._useLocalStorage) {
-            try { return window.localStorage.getItem(key); } catch(e) { return this._memory[key] || null; }
-        } else { return this._memory[key] || null; }
+        if (Object.hasOwn(this._memory, key)) return this._memory[key];
+        try { return window.localStorage.getItem(key); }
+        catch (error) { this.warn(); throw error; }
     },
     set(key, value) {
-        if (this._useLocalStorage) {
-            try { window.localStorage.setItem(key, value); } catch(e) { this._memory[key] = String(value); }
-        } else { this._memory[key] = String(value); }
+        const text = String(value);
+        try {
+            window.localStorage.setItem(key, text);
+            delete this._memory[key];
+            return true;
+        } catch (error) {
+            this._memory[key] = text;
+            this.warn();
+            throw error;
+        }
     },
     del(key) {
-        if (this._useLocalStorage) {
-            try { window.localStorage.removeItem(key); } catch(e) { delete this._memory[key]; }
-        } else { delete this._memory[key]; }
+        try { window.localStorage.removeItem(key); delete this._memory[key]; }
+        catch (error) { this.warn(); throw error; }
     }
 };
 
@@ -374,45 +382,167 @@ const App = {
     defaultTeam: ["Покаместов А. Ю.", "Туреханов М. Б.", "Филипенков В. А.", "Аксютенко А. В.", "Мягков Е. В.", "Булгаров Р. Т.", "Полосухин Е. А.", "Мазуров А. Н.", "Шамотин В. В."],
     saveTimeout: null,
     isDirty: false,
+    baseline: null,
+    deletedExpenses: {},
+    loading: false,
+    lastStamp: 0,
+    categories: ['components', 'materials', 'power_board', 'cables', 'consumables', 'fot', 'logistic', 'agency', 'other'],
+    projectFields: ['name', 'revenuePlan', 'revenueFact', 'expensePlan', 'tax_system', 'targetMargin', 'cashFee'],
 
     init() {
         StorageService.init();
-        this.migrateOldProjects();
-        this.loadTeamList();
+        try { this.migrateOldProjects(); } catch (error) { this.showError(error); }
+        try { this.loadTeamList(); } catch (error) { this.showError(error); }
         this.updateProjectList();
-        this.addExpenseRow();
-        this.calculate();
-        this.updateAdvancePercent();
-
-        window.addEventListener('beforeunload', (e) => {
-            const name = this.safeGetElement('projectName')?.value?.trim();
-            if (name && this.isDirty && !this.validateAllRows()) {
-                e.preventDefault();
-                e.returnValue = 'Есть незаполненные поля расходов. Вы уверены, что хотите закрыть?';
+        this.clearProject(true);
+        try {
+            const draft = JSON.parse(StorageService.get('ledDraft') || 'null');
+            if (draft && draft.project) {
+                this.renderProject(draft.id, draft.project);
+                this.isDirty = false;
+            } else {
+                const id = StorageService.get('ledLastProject');
+                const data = this.readProjects()[id];
+                if (data && !data.deletedAt) this.renderProject(id, data);
+            }
+        } catch (error) { this.showError(error); }
+        window.addEventListener('beforeunload', (event) => {
+            if (this.isDirty) { event.preventDefault(); event.returnValue = ''; }
+        });
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'ledProjects') this.updateProjectList();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') this.closeDashboard();
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+                event.preventDefault(); this.saveProject(false);
             }
         });
     },
 
-    safeGetElement(id) { return document.getElementById(id); },
-    generateUUID() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); },
-
-    getNumber(str) {
-        if (!str) return 0;
-        const cleaned = String(str).replace(/[^\d.,]/g, '').replace(',', '.');
-        const parsed = parseFloat(cleaned);
-        return isNaN(parsed) ? 0 : Math.abs(parsed); 
+    stamp() { this.lastStamp = Math.max(Date.now(), this.lastStamp + 1); return this.lastStamp; },
+    escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
+    },
+    money(value) { const number = typeof value === 'number' ? value : this.getNumber(value); return (Number.isFinite(number) ? number : 0).toLocaleString('ru-RU', {maximumFractionDigits: 2}); },
+    round(value) { return Math.round((value + Number.EPSILON) * 100) / 100; },
+    showError(error) {
+        const indicator = this.safeGetElement('saveIndicator');
+        if (indicator) { clearTimeout(this.saveTimeout); indicator.textContent = 'Не сохранено — выгрузи базу'; indicator.style.background = 'var(--danger)'; indicator.style.opacity = '1'; }
+        console.error(error);
+    },
+    readProjects() {
+        const raw = StorageService.get('ledProjects');
+        if (!raw) return Object.create(null);
+        const projects = JSON.parse(raw);
+        if (!projects || Array.isArray(projects) || typeof projects !== 'object') throw new Error('База повреждена. Сначала выгрузи копию данных.');
+        return projects;
+    },
+    rowEqual(a, b) {
+        return ['date', 'category', 'comment', 'pay', 'amount', 'docs', 'tasks'].every(key => JSON.stringify(a?.[key]) === JSON.stringify(b?.[key]));
+    },
+    mergeProject(local, incoming) {
+        if (!local) return structuredClone(incoming);
+        const result = structuredClone(local);
+        result.fieldTimes = {...local.fieldTimes};
+        for (const field of this.projectFields) {
+            if ((incoming.fieldTimes?.[field] || 0) > (local.fieldTimes?.[field] || 0)) {
+                result[field] = incoming[field]; result.fieldTimes[field] = incoming.fieldTimes[field];
+            }
+        }
+        result.deletedAt = Math.max(local.deletedAt || 0, incoming.deletedAt || 0);
+        result.updatedAt = Math.max(local.updatedAt || 0, incoming.updatedAt || 0);
+        result.deletedExpenses = {...local.deletedExpenses};
+        for (const [id, time] of Object.entries(incoming.deletedExpenses || {})) result.deletedExpenses[id] = Math.max(result.deletedExpenses[id] || 0, time);
+        const rows = new Map((local.expenses || []).map(row => [row.uuid, row]));
+        for (const row of incoming.expenses || []) {
+            if (!rows.has(row.uuid) || (row.updatedAt || 0) > (rows.get(row.uuid).updatedAt || 0)) rows.set(row.uuid, row);
+        }
+        // UUIDs are never reused: a deleted row must not return from an old backup.
+        result.expenses = [...rows.values()].filter(row => !Object.hasOwn(result.deletedExpenses, row.uuid));
+        return result;
+    },
+    renderProject(id, data) {
+        this.loading = true;
+        this.currentProjectId = id;
+        this.baseline = structuredClone(data);
+        this.deletedExpenses = {...data.deletedExpenses};
+        for (const field of this.projectFields) {
+            const el = this.safeGetElement(field === 'name' ? 'projectName' : field);
+            if (el) el.value = data[field] ?? (field === 'tax_system' ? 'usn6' : field === 'name' ? '' : '0');
+        }
+        this.safeGetElement('categoryFilter').value = 'all';
+        this.safeGetElement('expenseBody').replaceChildren();
+        this.expenseIdCounter = 0;
+        for (const expense of data.expenses || []) this.addExpenseRow(expense);
+        if (!data.expenses?.length) this.addExpenseRow();
+        this.calculate(); this.updateProjectList(); this.loading = false; this.isDirty = false;
+    },
+    collectProject() {
+        const time = this.stamp();
+        const data = {fieldTimes: {...this.baseline?.fieldTimes}, deletedExpenses: {...this.deletedExpenses}, expenses: [], updatedAt: this.baseline?.updatedAt || 0};
+        for (const field of this.projectFields) {
+            data[field] = this.safeGetElement(field === 'name' ? 'projectName' : field)?.value ?? '';
+            if (field === 'name') data[field] = data[field].trim();
+            else if (field !== 'tax_system' && data[field] === '') data[field] = '0';
+            if (String(data[field]) !== String(this.baseline?.[field] ?? '')) { data.fieldTimes[field] = time; data.updatedAt = time; }
+        }
+        const previous = new Map((this.baseline?.expenses || []).map(row => [row.uuid, row]));
+        for (const row of this.safeGetElement('expenseBody').children) {
+            const category = row.querySelector('.exp-category').value;
+            const expense = {
+                uuid: row.dataset.uuid, date: row.querySelector('.exp-date').value,
+                category, comment: row.querySelector(category === 'fot' ? '.fot-select' : '.exp-comment').value,
+                pay: row.querySelector('.exp-pay').value, amount: this.getNumber(row.querySelector('.exp-amount').value),
+                docs: row.querySelector('.exp-docs').checked,
+                tasks: category === 'fot' ? Array.from(row.querySelectorAll('.task-cb:checked'), cb => cb.value) : []
+            };
+            // A newly added empty line is a placeholder, not an expense.
+            if (!expense.comment.trim() && expense.amount === 0) {
+                if (previous.has(expense.uuid)) { data.deletedExpenses[expense.uuid] = time; this.deletedExpenses[expense.uuid] = time; }
+                continue;
+            }
+            expense.updatedAt = this.rowEqual(expense, previous.get(expense.uuid)) ? previous.get(expense.uuid).updatedAt || 0 : time;
+            if (expense.updatedAt === time) data.updatedAt = time;
+            data.expenses.push(expense);
+        }
+        if (JSON.stringify(data.deletedExpenses) !== JSON.stringify(this.baseline?.deletedExpenses || {})) data.updatedAt = time;
+        return data;
     },
 
-    formatMoneyInput(e) {
-        try {
-            const input = e.target;
-            const cursorPosition = input.selectionStart;
-            const originalLength = input.value.length;
-            const val = input.value.replace(/\D/g, '');
-            input.value = val !== '' ? Number(val).toLocaleString('ru-RU') : '';
-            const newLength = input.value.length;
-            input.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (newLength - originalLength));
-        } catch(err) {}
+    safeGetElement(id) { return document.getElementById(id); },
+    generateUUID() { return 'project_' + (globalThis.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2)); },
+
+    getNumber(value) {
+        if (typeof value === 'number') return Number.isFinite(value) && value >= 0 ? this.round(value) : 0;
+        const text = String(value ?? '').trim().replace(/[\s\u00a0\u202f₽]/g, '').replace(',', '.');
+        if (!/^\d+(?:\.\d{0,2})?$/.test(text)) return 0;
+        const number = Number(text);
+        return Number.isFinite(number) && number <= Number.MAX_SAFE_INTEGER / 100 ? this.round(number) : 0;
+    },
+
+    formatMoneyInput(event) {
+        const input = event.target;
+        const before = input.value;
+        const cursor = input.selectionStart ?? before.length;
+        const digitsBefore = before.slice(0, cursor).replace(/[\s\u00a0\u202f]/g, '').length;
+        let raw = before.replace(/[\s\u00a0\u202f₽]/g, '').replace(',', '.');
+        if (!/^\d*(?:\.\d{0,2})?$/.test(raw) || Number(raw) > Number.MAX_SAFE_INTEGER / 100) {
+            input.classList.add('error-field'); input.setCustomValidity('Введи положительную сумму, не больше двух цифр после запятой.');
+            this.calculate(); return;
+        }
+        input.classList.remove('error-field'); input.setCustomValidity('');
+        if (raw) {
+            const parts = raw.split('.');
+            const whole = parts[0] || '0';
+            input.value = Number(whole).toLocaleString('ru-RU') + (parts.length > 1 ? ',' + parts[1] : '');
+            let position = 0, count = 0;
+            while (position < input.value.length && count < digitsBefore) {
+                if (!/[\s\u00a0\u202f]/.test(input.value[position])) count++;
+                position++;
+            }
+            try { input.setSelectionRange(position, position); } catch (error) {}
+        }
         this.calculate();
     },
 
@@ -427,14 +557,14 @@ const App = {
         const percEl = this.safeGetElement('advancePercent');
         const factEl = this.safeGetElement('revenueFact');
         if(!planEl || !percEl || !factEl) return;
-        
+
         let perc = parseFloat(percEl.value) || 0;
-        if(perc > 100) { perc = 100; percEl.value = 100; }
-        
+        perc = Math.max(0, Math.min(100, perc)); percEl.value = perc;
+
         const plan = this.getNumber(planEl.value);
         const amount = (plan * perc) / 100;
-        
-        factEl.value = Math.round(amount).toLocaleString('ru-RU');
+
+        factEl.value = this.money(this.round(amount));
         this.calculate();
         this.autoSave();
     },
@@ -443,9 +573,9 @@ const App = {
         const plan = this.getNumber(this.safeGetElement('revenuePlan')?.value);
         const fact = this.getNumber(this.safeGetElement('revenueFact')?.value);
         const percEl = this.safeGetElement('advancePercent');
-        
+
         if(percEl && plan > 0) {
-            percEl.value = Math.round((fact / plan) * 100);
+            percEl.value = this.round((fact / plan) * 100);
         } else if (percEl) {
             percEl.value = '';
         }
@@ -454,15 +584,14 @@ const App = {
     // ---- КОМАНДА ----
     getTeamList() {
         let team = this.defaultTeam;
-        try { 
-            const saved = JSON.parse(StorageService.get('ledTeam')); 
-            if(saved && saved.length > 0) team = saved; 
+        try {
+            const saved = JSON.parse(StorageService.get('ledTeam'));
+            if (Array.isArray(saved) && saved.every(name => typeof name === 'string')) team = saved;
         } catch(e) {}
         return team;
     },
 
     loadTeamList() {
-        StorageService.set('ledTeam', JSON.stringify(this.getTeamList()));
         this.refreshFotSelects();
     },
 
@@ -476,7 +605,10 @@ const App = {
                 opt.value = name; opt.textContent = name;
                 sel.appendChild(opt);
             });
-            if (currentVal && team.includes(currentVal)) sel.value = currentVal;
+            if (currentVal && !team.includes(currentVal)) {
+                const option = document.createElement('option'); option.value = currentVal; option.textContent = currentVal; sel.appendChild(option);
+            }
+            if (currentVal) sel.value = currentVal;
         });
     },
 
@@ -507,6 +639,11 @@ const App = {
             const catEl = row.querySelector('.exp-category');
             if (!catEl) return true;
             const category = catEl.value;
+            const description = row.querySelector(category === 'fot' ? '.fot-select' : '.exp-comment');
+            const amountInput = row.querySelector('.exp-amount');
+            if (!description?.value.trim() && !amountInput?.value.trim()) {
+                row.querySelectorAll('.error-field').forEach(el => el.classList.remove('error-field')); return true;
+            }
             let isValid = true;
 
             if (category !== 'fot') {
@@ -534,7 +671,7 @@ const App = {
             const amount = row.querySelector('.exp-amount');
             if (amount) {
                 const val = this.getNumber(amount.value);
-                if (val <= 0) {
+                if (val <= 0 || !amount.checkValidity()) {
                     amount.classList.add('error-field');
                     isValid = false;
                 } else {
@@ -572,8 +709,8 @@ const App = {
                 if (fotWrapper) fotWrapper.style.display = 'none';
                 if (tasksDiv) tasksDiv.style.display = 'none';
             }
-            
-            rowElement.className = 'row-category-' + category;
+
+            rowElement.className = 'row-category-' + (this.categories.includes(category) ? category : 'other');
             this.validateRow(rowElement);
             this.applyFilter();
         } catch (e) {}
@@ -595,7 +732,7 @@ const App = {
 
             let commentText = (data && data.comment) ? data.comment : '';
             let isFotCat = (data && data.category === 'fot');
-            let docsChecked = (data && data.docs !== undefined) ? (data.docs ? 'checked' : '') : 'checked';
+            let docsChecked = data?.docs ? 'checked' : '';
             let category = data?.category || 'components';
 
             row.innerHTML = `
@@ -612,15 +749,15 @@ const App = {
                         <option value="other" ${category === 'other' ? 'selected' : ''}>Прочие накладные</option>
                     </select>
 
-                    <input type="text" class="exp-comment" placeholder="Что купили / Ссылка на чек" value="${!isFotCat ? commentText : ''}" oninput="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();" autocomplete="off">
+                    <input type="text" class="exp-comment" placeholder="Что купили / Ссылка на чек" value="${this.escapeHTML(!isFotCat ? commentText : '')}" oninput="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();" autocomplete="off">
 
                     <div class="fot-select-wrapper">
                         <select class="fot-select" onchange="App.validateRow(this.closest('tr')); App.calculate(); App.autoSave();"></select>
                         <button class="btn btn-secondary" onclick="App.promptNewMember(this)">+</button>
                     </div>
 
-                    <span class="date-stamp">Записано: ${dateStr}</span>
-                    <input type="hidden" class="exp-date" value="${dateStr}">
+                    <span class="date-stamp">Записано: ${this.escapeHTML(dateStr)}</span>
+                    <input type="hidden" class="exp-date" value="${this.escapeHTML(dateStr)}">
 
                     <div class="fot-tasks">
                         <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave();" value="Сборка" ${isChecked('Сборка')}><span>Сборка</span></label>
@@ -632,17 +769,17 @@ const App = {
                         <label class="task-chip"><input type="checkbox" class="task-cb" onchange="App.autoSave();" value="Щит" ${isChecked('Щит')}><span>Сборка щита</span></label>
                     </div>
                 </td>
-                <td data-label="Оплата (115-ФЗ)">
+                <td data-label="Оплата">
                     <select class="exp-pay" onchange="App.calculate(); App.autoSave();" style="margin-bottom: 0;">
                         <option value="beznal" ${data?.pay === 'beznal' ? 'selected' : ''}>Безнал (ООО/ИП)</option>
                         <option value="npd" ${data?.pay === 'npd' ? 'selected' : ''}>Безнал (СЗ)</option>
                         <option value="fiz" ${data?.pay === 'fiz' ? 'selected' : ''}>На карту (Физлицо)</option>
                         <option value="nal" ${data?.pay === 'nal' ? 'selected' : ''}>Наличка</option>
                     </select>
-                    <div class="nal-warning">+ обнал</div><div class="npd-warning">+ 6% налог</div>
+                    <div class="nal-warning"></div><div class="npd-warning"></div>
                 </td>
                 <td data-label="Сумма (₽)">
-                    <input type="text" inputmode="decimal" class="exp-amount money" value="${data && data.amount ? Number(data.amount).toLocaleString('ru-RU') : ''}" oninput="App.formatMoneyInput(event); App.validateRow(this.closest('tr')); App.autoSave();" style="margin-bottom: 0;" placeholder="0">
+                    <input type="text" inputmode="decimal" class="exp-amount money" value="${data && data.amount ? this.money(data.amount) : ''}" oninput="App.formatMoneyInput(event); App.validateRow(this.closest('tr')); App.autoSave();" style="margin-bottom: 0;" placeholder="0">
                     <button class="btn btn-secondary" style="font-size:11px; padding:6px; margin-top:5px; width: 100%; border-radius: 4px;" onclick="App.suggestAmount(this)">💡 Подставить среднюю</button>
                 </td>
                 <td data-label="Документы" class="td-center">
@@ -660,7 +797,12 @@ const App = {
 
             if (isFotCat) {
                 const sel = row.querySelector('.fot-select');
-                if (sel) sel.value = commentText;
+                if (sel) {
+                    if (!Array.from(sel.options).some(option => option.value === commentText)) {
+                        const option = document.createElement('option'); option.value = commentText; option.textContent = commentText; sel.appendChild(option);
+                    }
+                    sel.value = commentText;
+                }
             }
 
             this.updateRowUI(row);
@@ -673,7 +815,7 @@ const App = {
         if (!row) return;
         const data = {
             category: row.querySelector('.exp-category').value,
-            comment: row.querySelector('.exp-comment').value || row.querySelector('.fot-select')?.value || '',
+            comment: row.querySelector(row.querySelector('.exp-category').value === 'fot' ? '.fot-select' : '.exp-comment').value,
             pay: row.querySelector('.exp-pay').value,
             amount: this.getNumber(row.querySelector('.exp-amount').value),
             docs: row.querySelector('.exp-docs').checked,
@@ -688,38 +830,40 @@ const App = {
         const row = btn.closest('tr');
         if (!row) return;
         const category = row.querySelector('.exp-category').value;
-        let history = {};
-        try { history = JSON.parse(StorageService.get('amountHistory') || '{}'); } catch(e){}
+        const history = this.getAmountHistory();
         if (history[category] && history[category].length > 0) {
             const avg = history[category].reduce((a,b) => a + b, 0) / history[category].length;
             const amountInput = row.querySelector('.exp-amount');
-            amountInput.value = Math.round(avg).toLocaleString('ru-RU');
+            amountInput.value = this.money(this.round(avg));
             this.formatMoneyInput({ target: amountInput });
             this.validateRow(row);
             this.autoSave();
         } else {
-            alert('Сначала сохраните несколько расходов в этой категории, чтобы ИИ мог рассчитать среднюю сумму.');
+            alert('Сначала сохраните несколько расходов в этой категории, для расчёта средней суммы.');
         }
     },
 
-    saveAmountHistory(expenses) {
-        let history = {};
-        try { history = JSON.parse(StorageService.get('amountHistory') || '{}'); } catch(e){}
-        expenses.forEach(e => {
-            if (e.amount > 0) {
-                if (!history[e.category]) history[e.category] = [];
-                history[e.category].push(e.amount);
-                if (history[e.category].length > 15) history[e.category].shift();
+    getAmountHistory() {
+        const history = Object.create(null);
+        for (const project of Object.values(this.readProjects())) {
+            if (project.deletedAt) continue;
+            for (const expense of project.expenses || []) {
+                if (expense.amount > 0) (history[expense.category] ||= []).push(expense.amount);
             }
-        });
-        StorageService.set('amountHistory', JSON.stringify(history));
+        }
+        return history;
     },
 
     removeExpenseRow(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-        this.calculate();
-        this.autoSave();
+        const row = this.safeGetElement(id);
+        if (row) {
+            if (this.baseline?.expenses?.some(expense => expense.uuid === row.dataset.uuid)) {
+                try { StorageService.set('ledRecovery', JSON.stringify(this.readProjects())); }
+                catch (error) { this.showError(error); return; }
+            }
+            this.deletedExpenses[row.dataset.uuid] = this.stamp(); row.remove();
+        }
+        this.calculate(); this.autoSave();
     },
 
     applyFilter() {
@@ -772,7 +916,7 @@ const App = {
             const planRev = this.getNumber(planRevInput.value);
             const factRev = this.getNumber(factRevInput.value);
             const expPlan = this.getNumber(expPlanInput.value);
-            
+
             this.updateAdvancePercent();
 
             this.safeSetText('debtLabel', "Дебиторка: " + Math.max(0, planRev - factRev).toLocaleString('ru-RU') + " ₽");
@@ -780,7 +924,7 @@ const App = {
             let totalFactExp = 0, totalCashLoss = 0, acceptedExpForTax = 0, inputNds = 0, hasFiz = false;
             const body = this.safeGetElement('expenseBody');
             const rows = body ? body.children : [];
-            const cashFee = this.getNumber(cashFeeInput ? cashFeeInput.value : '10');
+            const cashFee = this.getNumber(cashFeeInput ? cashFeeInput.value : '0');
 
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
@@ -790,33 +934,33 @@ const App = {
 
                 const nalW = row.querySelector('.nal-warning');
                 const npdW = row.querySelector('.npd-warning');
-                if (nalW) nalW.style.display = (pay === 'nal') ? 'block' : 'none';
-                if (npdW) npdW.style.display = (pay === 'npd') ? 'block' : 'none';
+                if (nalW) nalW.style.display = 'none';
+                if (npdW) npdW.style.display = 'none';
 
                 let actualCost = amount;
-                if (pay === 'nal') { let fee = amount * (cashFee / 100); actualCost += fee; totalCashLoss += fee; }
-                if (pay === 'npd') { actualCost = amount / 0.94; }
+                if (pay === 'nal') totalCashLoss += this.round(amount * cashFee / 100);
+
 
                 totalFactExp += actualCost;
                 if (pay === 'fiz') hasFiz = true;
                 if (docs && (pay === 'beznal' || pay === 'npd')) acceptedExpForTax += actualCost;
-                if (docs && pay === 'beznal') inputNds += amount * 22/122;
+                // Input VAT needs supplier data; never infer it from a payment method.
             }
 
             if (alertsContainer) {
                 alertsContainer.innerHTML = '';
-                if (hasFiz) alertsContainer.innerHTML += '<div class="alert alert-red"><strong>🔴 115-ФЗ:</strong> Перевод физлицу без статуса = риск блокировки.</div>';
-                if (totalCashLoss > 0) alertsContainer.innerHTML += '<div class="alert alert-yellow"><strong>🟡 ОБНАЛ:</strong> Потери на комиссиях кэша: <b>' + Math.round(totalCashLoss).toLocaleString() + ' ₽</b>.</div>';
+
+                if (totalCashLoss > 0) alertsContainer.innerHTML += '<div class="alert alert-yellow"><strong>Резерв комиссии:</strong> Дополнительно к введённым расходам: <b>' + this.money(totalCashLoss) + ' ₽</b>.</div>';
             }
 
             // ОБНОВЛЕНИЕ ГРАДУСНИКА БЮДЖЕТА
             const pbFill = this.safeGetElement('budgetProgressBar');
             const pbText = this.safeGetElement('budgetPercentText');
-            if (pbFill && pbText && expPlan > 0) {
-                let percent = (totalFactExp / expPlan) * 100;
+            if (pbFill && pbText) {
+                let percent = expPlan > 0 ? (totalFactExp / expPlan) * 100 : 0;
                 pbText.innerText = percent.toFixed(1) + '%';
                 pbFill.style.width = Math.min(percent, 100) + '%';
-                
+
                 pbFill.classList.remove('bg-warning', 'bg-danger');
                 if (percent > 100) { pbFill.classList.add('bg-danger'); pbText.style.color = 'var(--danger)'; }
                 else if (percent > 85) { pbFill.classList.add('bg-warning'); pbText.style.color = 'var(--warning)'; }
@@ -825,17 +969,17 @@ const App = {
 
             const taxSys = taxSysInput ? taxSysInput.value : 'usn6';
             const taxes = this.getTaxData(planRev, factRev, acceptedExpForTax, inputNds, taxSys);
-            const netProfitPlan = planRev - totalFactExp - taxes.taxPlan;
-            const realCash = factRev - totalFactExp - taxes.taxFact;
+            const netProfitPlan = planRev - totalFactExp - taxes.taxPlan - totalCashLoss;
+            const realCash = factRev - totalFactExp;
             const marginPercent = planRev > 0 ? (netProfitPlan / planRev) * 100 : 0;
 
             const targetMargin = parseFloat(targetMarginInput ? targetMarginInput.value : '35') || 0;
             const mCard = this.safeGetElement('marginCard');
             if (mCard) mCard.className = "metric-card metric-margin " + (marginPercent >= targetMargin ? 'margin-ok' : 'margin-bad');
 
-            this.safeSetText('netProfit', Math.round(netProfitPlan).toLocaleString('ru-RU') + " ₽");
-            this.safeSetText('realCash', Math.round(realCash).toLocaleString('ru-RU') + " ₽");
-            this.safeSetText('taxAmount', Math.round(taxes.taxFact).toLocaleString('ru-RU') + " ₽");
+            this.safeSetText('netProfit', this.money(netProfitPlan) + " ₽");
+            this.safeSetText('realCash', this.money(realCash) + " ₽");
+            this.safeSetText('taxAmount', this.money(taxes.taxFact) + " ₽");
             this.safeSetText('marginPercent', marginPercent.toFixed(1) + " %");
 
             this.applyFilter();
@@ -877,7 +1021,7 @@ const App = {
             for (let cat in sums) {
                 if (sums[cat] > 0) {
                     let perc = total > 0 ? (sums[cat] / total * 100).toFixed(1) : 0;
-                    html += `<tr><td>${catNames[cat] || cat}</td><td>${Math.round(sums[cat]).toLocaleString('ru-RU')} ₽</td><td>${perc}%</td></tr>`;
+                    html += `<tr><td>${this.escapeHTML(catNames[cat] || cat)}</td><td>${this.money(sums[cat])} ₽</td><td>${perc}%</td></tr>`;
                 }
             }
             summaryBody.innerHTML = html || '<tr><td colspan=\"3\">Нет данных</td></tr>';
@@ -885,172 +1029,138 @@ const App = {
     },
 
     showSaveIndicator() {
-        const ind = this.safeGetElement('saveIndicator');
-        if (!ind) return;
-        ind.style.opacity = '1';
+        const indicator = this.safeGetElement('saveIndicator');
+        if (!indicator) return;
+        indicator.textContent = '💾 Сохранено'; indicator.style.background = 'var(--success)'; indicator.style.opacity = '1';
         clearTimeout(this.saveTimeout);
-        this.saveTimeout = setTimeout(() => { ind.style.opacity = '0'; }, 2000);
+        this.saveTimeout = setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
     },
 
-    // ---- ХРАНЕНИЕ ----
     saveProject(isSilent = false) {
         try {
-            const pNameEl = this.safeGetElement('projectName');
-            if (!pNameEl) return false;
-            const name = pNameEl.value.trim();
-            if (!name) {
-                if (!isSilent) alert("Укажите название проекта!");
-                return false;
+            const data = this.collectProject();
+            if (!this.validateMoneyFields()) return false;
+            if (!data.name) { if (!isSilent) alert('Укажи название объекта. Введённые расходы сохранены в черновике.'); return false; }
+            if (!isSilent && (!this.validateAllRows() || !this.validateMoneyFields())) {
+                alert('Проверь выделенные поля: описание и положительная сумма расхода, не больше двух цифр после запятой.'); return false;
             }
-
-            if (!isSilent && !this.validateAllRows()) {
-                alert("Исправьте ошибки в строках расходов (красные поля). Убедитесь, что суммы больше нуля и заполнены описания.");
-                return false;
-            }
-
-            const body = this.safeGetElement('expenseBody');
-            const rows = body ? body.children : [];
-
-            const pData = {
-                name: name,
-                revenuePlan: this.safeGetElement('revenuePlan')?.value || '0',
-                revenueFact: this.safeGetElement('revenueFact')?.value || '0',
-                expensePlan: this.safeGetElement('expensePlan')?.value || '0',
-                tax_system: this.safeGetElement('tax_system')?.value || 'usn6',
-                targetMargin: this.safeGetElement('targetMargin')?.value || '35',
-                cashFee: this.safeGetElement('cashFee')?.value || '10',
-                expenses: []
-            };
-
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const cat = row.querySelector('.exp-category')?.value || 'other';
-                let cmt = '';
-                if (cat === 'fot') {
-                    cmt = row.querySelector('.fot-select')?.value || '';
-                } else {
-                    cmt = row.querySelector('.exp-comment')?.value || '';
-                }
-                const tasks = Array.from(row.querySelectorAll('.task-cb:checked')).map(cb => cb.value);
-                pData.expenses.push({
-                    uuid: row.dataset.uuid,
-                    date: row.querySelector('.exp-date')?.value || '',
-                    category: cat,
-                    comment: cmt,
-                    pay: row.querySelector('.exp-pay')?.value || 'beznal',
-                    amount: this.getNumber(row.querySelector('.exp-amount')?.value),
-                    docs: row.querySelector('.exp-docs')?.checked || false,
-                    tasks: tasks
-                });
-            }
-
-            this.saveAmountHistory(pData.expenses);
-
-            let projects = {};
-            try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
-            projects[this.currentProjectId] = pData;
+            const projects = this.readProjects();
+            if (projects[this.currentProjectId]?.deletedAt) throw new Error('Объект удалён в другой вкладке. Выгрузи базу, чтобы сохранить текущий черновик.');
+            const merged = this.mergeProject(projects[this.currentProjectId], data);
+            projects[this.currentProjectId] = merged;
             StorageService.set('ledProjects', JSON.stringify(projects));
-
+            StorageService.set('ledLastProject', this.currentProjectId);
+            StorageService.del('ledDraft');
+            const changedElsewhere = this.projectFields.some(field => merged[field] !== data[field]) || JSON.stringify(merged.expenses) !== JSON.stringify(data.expenses);
+            this.baseline = structuredClone(merged);
+            this.deletedExpenses = {...merged.deletedExpenses};
             this.isDirty = false;
-            this.updateProjectList();
-            if (!isSilent) alert("Проект '" + name + "' успешно сохранен!");
-            else this.showSaveIndicator();
+            this.updateProjectList(); this.showSaveIndicator();
+            // Refresh only when another tab supplied changes, preserving the caret during typing.
+            if (changedElsewhere) this.renderProject(this.currentProjectId, merged);
+            if (!isSilent) alert('Объект «' + data.name + '» сохранён.');
             return true;
-        } catch(e) { return false; }
+        } catch (error) { this.isDirty = true; this.showError(error); if (!isSilent) alert(error.message || 'Не удалось сохранить. Выгрузи базу в файл.'); return false; }
+    },
+    validateMoneyFields() {
+        return Array.from(document.querySelectorAll('input.money')).every(input => {
+            const raw = input.value.replace(/[\s\u00a0\u202f₽]/g, '').replace(',', '.');
+            const valid = /^\d*(?:\.\d{0,2})?$/.test(raw) && (!raw || Number(raw) <= Number.MAX_SAFE_INTEGER / 100);
+            input.setCustomValidity(valid ? '' : 'Проверь сумму: положительное число с копейками.');
+            input.classList.toggle('error-field', !valid);
+            return valid;
+        });
+    },
+    preserveDraft() {
+        const project = this.collectProject();
+        StorageService.set('ledDraft', JSON.stringify({id: this.currentProjectId, project}));
+    },
+    beforeSwitch() {
+        if (!this.safeGetElement('projectName').value.trim() && this.collectProject().expenses.length) {
+            this.safeGetElement('projectName').value = 'Черновик ' + new Date().toLocaleString('ru-RU');
+            this.isDirty = true;
+        }
+        if (!this.isDirty) return true;
+        if (this.safeGetElement('projectName').value.trim() && this.saveProject(true)) return true;
+        return confirm('Есть несохранённые изменения. Остаться, чтобы сохранить их?') ? false : true;
     },
 
     autoSave() {
+        if (this.loading) return;
         this.isDirty = true;
-        const el = this.safeGetElement('projectName');
-        if (el && el.value.trim() !== '') this.saveProject(true);
+        if (!this.validateMoneyFields()) return;
+        if (this.safeGetElement('projectName')?.value.trim()) this.saveProject(true);
+        else {
+            try { this.preserveDraft(); this.isDirty = false; this.showSaveIndicator(); }
+            catch (error) { this.showError(error); }
+        }
     },
 
     migrateOldProjects() {
-        try {
-            let projects = JSON.parse(StorageService.get('ledProjects') || '{}');
-            let needsSave = false;
-            for (let key in projects) {
-                if (key && !key.startsWith('project_')) {
-                    let newId = this.generateUUID();
-                    projects[key].name = key;
-                    projects[newId] = projects[key];
-                    delete projects[key];
-                    needsSave = true;
-                }
+        const projects = this.readProjects();
+        const original = JSON.stringify(projects);
+        let changed = false;
+        // Old keys can be names or random IDs. Never rewrite an existing key or name.
+        for (const [id, project] of Object.entries(projects)) {
+            if (!project || typeof project !== 'object' || Array.isArray(project)) throw new Error('Неверный формат базы. Выгрузи файл для восстановления.');
+            if (!project.name) { project.name = id; changed = true; }
+            if (!Array.isArray(project.expenses)) { project.expenses = []; changed = true; }
+            for (let index = 0; index < project.expenses.length; index++) {
+                const expense = project.expenses[index];
+                if (!expense.uuid) { expense.uuid = 'legacy_' + id + '_' + index; changed = true; }
             }
-            if (needsSave) StorageService.set('ledProjects', JSON.stringify(projects));
-        } catch(e){}
+        }
+        if (changed) {
+            if (!StorageService.get('ledRecovery')) StorageService.set('ledRecovery', original);
+            StorageService.set('ledProjects', JSON.stringify(projects));
+        }
     },
 
-    clearProject() {
-        this.currentProjectId = this.generateUUID();
-        const pName = this.safeGetElement('projectName'); if (pName) pName.value = '';
-        const rP = this.safeGetElement('revenuePlan'); if (rP) rP.value = '1 200 000';
-        const rF = this.safeGetElement('revenueFact'); if (rF) rF.value = '0';
-        const aP = this.safeGetElement('advancePercent'); if (aP) aP.value = '50';
-        const eP = this.safeGetElement('expensePlan'); if (eP) eP.value = '700 000';
-        const tS = this.safeGetElement('tax_system'); if (tS) tS.value = 'usn6';
-        const tM = this.safeGetElement('targetMargin'); if (tM) tM.value = '35';
-        const cF = this.safeGetElement('cashFee'); if (cF) cF.value = '10';
-        
-        const body = this.safeGetElement('expenseBody'); if (body) body.innerHTML = '';
-        this.expenseIdCounter = 0;
-        this.addExpenseRow();
-        const sP = this.safeGetElement('savedProjects'); if (sP) sP.value = "";
-        this.calculate();
-        this.isDirty = false;
+    clearProject(initial = false) {
+        if (!initial && !this.beforeSwitch()) return;
+        this.renderProject(this.generateUUID(), {name: '', revenuePlan: '0', revenueFact: '0', expensePlan: '0', tax_system: 'usn6', targetMargin: '35', cashFee: '0', expenses: []});
+        if (!initial) {
+            try { StorageService.del('ledLastProject'); StorageService.del('ledDraft'); } catch (error) { this.showError(error); }
+        }
     },
 
     loadProject() {
+        const id = this.safeGetElement('savedProjects').value;
+        if (!id || !this.beforeSwitch()) return;
         try {
-            const sP = this.safeGetElement('savedProjects');
-            if (!sP) return;
-            const id = sP.value; if (!id) return;
-            let projects = JSON.parse(StorageService.get('ledProjects') || '{}');
-            const data = projects[id]; if (!data) return;
-
-            this.currentProjectId = id;
-            const pName = this.safeGetElement('projectName'); if (pName) pName.value = data.name || '';
-            const rP = this.safeGetElement('revenuePlan'); if (rP) rP.value = data.revenuePlan || '0';
-            const rF = this.safeGetElement('revenueFact'); if (rF) rF.value = data.revenueFact || '0';
-            const eP = this.safeGetElement('expensePlan'); if (eP) eP.value = data.expensePlan || '700 000';
-            const tS = this.safeGetElement('tax_system'); if (tS) tS.value = data.tax_system || 'usn6';
-            const tM = this.safeGetElement('targetMargin'); if (tM) tM.value = data.targetMargin || '35';
-            const cF = this.safeGetElement('cashFee'); if (cF) cF.value = data.cashFee || '10';
-            const body = this.safeGetElement('expenseBody'); if (body) body.innerHTML = '';
-
-            let exps = (data.expenses && data.expenses.length) ? data.expenses : [{}];
-            for (let i = 0; i < exps.length; i++) { this.addExpenseRow(exps[i]); }
-            this.calculate();
-            this.updateAdvancePercent();
-            this.isDirty = false;
-        } catch(e){}
+            const data = this.readProjects()[id];
+            if (!data || data.deletedAt) return;
+            this.renderProject(id, data);
+            StorageService.set('ledLastProject', id); StorageService.del('ledDraft');
+        } catch (error) { this.showError(error); alert(error.message); }
     },
 
     deleteProject() {
-        const sP = this.safeGetElement('savedProjects');
-        if (!sP) return;
-        const id = sP.value; if (!id) return alert("Выбери проект из списка для удаления!");
-
-        let projects = {};
-        try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
-        const pName = projects[id] && projects[id].name ? projects[id].name : "Неизвестный проект";
-        if (confirm('Точно удаляем проект "' + pName + '" из базы?')) {
-            delete projects[id];
+        const id = this.safeGetElement('savedProjects').value;
+        if (!id) return alert('Выбери объект из списка.');
+        try {
+            const projects = this.readProjects();
+            const project = projects[id];
+            if (!project || !confirm('Удалить объект «' + project.name + '»?')) return;
+            StorageService.set('ledRecovery', JSON.stringify(projects));
+            project.deletedAt = this.stamp();
             StorageService.set('ledProjects', JSON.stringify(projects));
+            if (this.currentProjectId === id) { this.isDirty = false; this.clearProject(); }
             this.updateProjectList();
-            this.clearProject();
-        }
+        } catch (error) { this.showError(error); alert('Не удалось удалить объект: ' + error.message); }
     },
 
     updateProjectList() {
         try {
+            const undo = this.safeGetElement('undoChange');
+            if (undo) undo.style.display = StorageService.get('ledRecovery') ? '' : 'none';
             const sel = this.safeGetElement('savedProjects');
             if (!sel) return;
             const cur = sel.value;
             sel.innerHTML = '<option value="">-- Выбрать проект --</option>';
-            let projects = JSON.parse(StorageService.get('ledProjects') || '{}');
+            const projects = this.readProjects();
             for (let id in projects) {
+                if (projects[id].deletedAt) continue;
                 const o = document.createElement('option');
                 o.value = id;
                 o.textContent = projects[id].name || "Без названия";
@@ -1061,106 +1171,153 @@ const App = {
         } catch(e){}
     },
 
+    downloadFile(content, type, filename) {
+        const url = URL.createObjectURL(new Blob([content], {type}));
+        const link = document.createElement('a'); link.href = url; link.download = filename;
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    },
     exportBackup() {
-        let projects = {}; let team = this.defaultTeam;
-        try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
-        try { const t = JSON.parse(StorageService.get('ledTeam')); if(t) team = t; } catch(e){}
-        const data = { projects, team };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "Главбух_Бэкап_" + new Date().toISOString().split('T')[0] + ".json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        try {
+            const projects = this.readProjects();
+            const current = this.collectProject();
+            if ((current.name || current.expenses.length) && !projects[this.currentProjectId]?.deletedAt) {
+                if (!current.name) current.name = 'Черновик';
+                projects[this.currentProjectId] = this.mergeProject(projects[this.currentProjectId], current);
+            }
+            const data = {schemaVersion: 2, exportedAt: this.stamp(), projects, team: this.getTeamList()};
+            this.downloadFile(JSON.stringify(data, null, 2), 'application/json', 'Главбух_Бэкап_' + new Date().toLocaleDateString('sv-SE') + '.json');
+        } catch (error) {
+            // Preserve even corrupted storage verbatim instead of exporting an empty database.
+            const raw = StorageService.get('ledProjects');
+            this.downloadFile(raw || '{}', 'application/json', 'Главбух_Восстановление.json');
+            alert('База требует восстановления. Выгружена её исходная копия.');
+        }
+    },
+    normalizeBackup(data) {
+        const object = value => value && typeof value === 'object' && !Array.isArray(value);
+        const safeKey = key => !['__proto__', 'constructor', 'prototype'].includes(key);
+        if (!object(data) || !object(data.projects) || (data.schemaVersion != null && ![1, 2].includes(data.schemaVersion))) throw new Error('Неподдерживаемый формат базы.');
+        if (data.team != null && (!Array.isArray(data.team) || data.team.some(name => typeof name !== 'string' || name.length > 300))) throw new Error('Неверный список сотрудников.');
+        const projects = Object.create(null);
+        const timestamp = this.stamp();
+        const validTime = time => Number.isSafeInteger(time) && time >= 0 && time <= timestamp + 86400000;
+        const money = value => {
+            if ((typeof value !== 'string' && typeof value !== 'number') || !/^\d+(?:[.,]\d{0,2})?$/.test(String(value).replace(/\s/g, ''))) throw new Error('Неверная сумма в файле.');
+            const amount = this.getNumber(value);
+            if (Number(String(value).replace(/\s/g, '').replace(',', '.')) > Number.MAX_SAFE_INTEGER / 100) throw new Error('Слишком большая сумма.');
+            return amount;
+        };
+        for (const [id, source] of Object.entries(data.projects)) {
+            if (!safeKey(id) || !object(source) || !Array.isArray(source.expenses)) throw new Error('Неверная запись объекта.');
+            const project = {fieldTimes: {}, deletedExpenses: {}, expenses: [], updatedAt: validTime(source.updatedAt) ? source.updatedAt : 0};
+            for (const field of this.projectFields) {
+                let value = source[field] ?? (field === 'name' ? id : field === 'tax_system' ? 'usn6' : '0');
+                if (typeof value !== 'string' && typeof value !== 'number') throw new Error('Неверное поле объекта.');
+                if (field === 'name') { if (!String(value).trim() || String(value).length > 1000) throw new Error('Неверное название объекта.'); project[field] = String(value); }
+                else if (field === 'tax_system') { if (!['usn6','usn15','usn6_nds5','usn15_nds5','osno'].includes(value)) throw new Error('Неверный режим расчёта.'); project[field] = value; }
+                else project[field] = String(money(value));
+                const time = source.fieldTimes?.[field];
+                project.fieldTimes[field] = validTime(time) ? time : (data.schemaVersion === 2 ? 0 : timestamp);
+            }
+            if (source.deletedAt != null) { if (!validTime(source.deletedAt)) throw new Error('Неверная дата удаления.'); project.deletedAt = source.deletedAt; }
+            if (source.deletedExpenses != null) {
+                if (!object(source.deletedExpenses)) throw new Error('Неверный список удалений.');
+                for (const [key, time] of Object.entries(source.deletedExpenses)) {
+                    if (!safeKey(key) || !validTime(time)) throw new Error('Неверная запись удаления.'); project.deletedExpenses[key] = time;
+                }
+            }
+            const seen = new Set();
+            source.expenses.forEach((expense, index) => {
+                if (!object(expense)) throw new Error('Неверный расход.');
+                const uuid = expense.uuid || 'legacy_' + id + '_' + index;
+                if (typeof uuid !== 'string' || !safeKey(uuid) || seen.has(uuid)) throw new Error('Повторяющийся или неверный номер расхода.');
+                seen.add(uuid);
+                if (!this.categories.includes(expense.category) || !['beznal','npd','fiz','nal'].includes(expense.pay)) throw new Error('Неверная категория или способ оплаты.');
+                if (typeof expense.comment !== 'string' || expense.comment.length > 20000 || (expense.date != null && typeof expense.date !== 'string')) throw new Error('Неверное описание расхода.');
+                if (expense.docs != null && typeof expense.docs !== 'boolean') throw new Error('Неверная отметка документа.');
+                const tasks = expense.tasks ?? [];
+                if (!Array.isArray(tasks) || tasks.some(task => typeof task !== 'string' || task.length > 300)) throw new Error('Неверный список работ.');
+                project.expenses.push({uuid, date: expense.date || '', category: expense.category, comment: expense.comment, pay: expense.pay, amount: money(expense.amount), docs: !!expense.docs, tasks,
+                    updatedAt: validTime(expense.updatedAt) ? expense.updatedAt : (data.schemaVersion === 2 ? 0 : timestamp)});
+            });
+            projects[id] = project;
+        }
+        return {projects, team: data.team || []};
     },
 
     importBackup(event) {
-        const file = event.target.files[0];
+        const file = event.target.files[0]; event.target.value = '';
         if (!file) return;
+        if (file.size > 20 * 1024 * 1024) return alert('Файл слишком большой: максимум 20 МБ.');
+        if (!this.beforeSwitch()) return;
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = event => {
             try {
-                const data = JSON.parse(e.target.result);
-                let localProjects = {};
-                try { localProjects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(err){}
-                const importedProjects = data.projects || {};
-                let mergeCount = 0;
-
-                for (let id in importedProjects) {
-                    if (!localProjects[id]) {
-                        localProjects[id] = importedProjects[id];
-                        mergeCount++;
-                    } else {
-                        let localExps = localProjects[id].expenses || [];
-                        const importedExps = importedProjects[id].expenses || [];
-                        const localIds = localExps.map(item => item.uuid);
-                        for (let i = 0; i < importedExps.length; i++) {
-                            if (!localIds.includes(importedExps[i].uuid)) {
-                                localExps.push(importedExps[i]);
-                                mergeCount++;
-                            }
-                        }
-                        localProjects[id].expenses = localExps;
-                        if (this.getNumber(importedProjects[id].revenueFact) > this.getNumber(localProjects[id].revenueFact)) {
-                            localProjects[id].revenueFact = importedProjects[id].revenueFact;
-                        }
-                    }
-                }
-                StorageService.set('ledProjects', JSON.stringify(localProjects));
-                if (data.team) StorageService.set('ledTeam', JSON.stringify(data.team));
-                alert("Синхронизация завершена! Интегрировано новых записей: " + mergeCount);
-                this.loadTeamList();
-                this.updateProjectList();
-                this.clearProject();
-            } catch (err) { alert("Ошибка файла бэкапа!"); }
+                const raw = JSON.parse(event.target.result);
+                const imported = this.normalizeBackup(raw);
+                const projects = this.readProjects();
+                if (Object.keys(projects).length && raw.schemaVersion !== 2 && !confirm('Это файл старой версии. Совпадающие поля и расходы будут обновлены значениями из файла. Прежняя база сохранится в резервной копии. Продолжить?')) return;
+                StorageService.set('ledRecovery', JSON.stringify(projects));
+                for (const [id, project] of Object.entries(imported.projects)) projects[id] = this.mergeProject(projects[id], project);
+                const team = [...new Set([...this.getTeamList(), ...imported.team])];
+                StorageService.set('ledTeam', JSON.stringify(team));
+                StorageService.set('ledProjects', JSON.stringify(projects));
+                const active = projects[this.currentProjectId];
+                this.loadTeamList(); this.updateProjectList();
+                if (active && !active.deletedAt) this.renderProject(this.currentProjectId, active);
+                else { this.isDirty = false; this.clearProject(); }
+                alert('База загружена. Изменения объединены, прежняя копия сохранена.');
+            } catch (error) { this.showError(error); alert('Не удалось загрузить базу: ' + error.message); }
         };
+        reader.onerror = () => alert('Не удалось прочитать файл.');
         reader.readAsText(file);
-        event.target.value = '';
     },
 
+    csvCell(value) {
+        let text = String(value ?? '');
+        if (/^[\s]*[=+@-]/.test(text)) text = "'" + text;
+        return '"' + text.replace(/"/g, '""') + '"';
+    },
     exportCSV() {
-        let csv = '\uFEFF';
-        csv += 'Проект;Дата;Категория;Детали/ФИО;Способ оплаты;Сумма;Чек/Акт;Задачи (ФОТ)\n';
-        let projects = {};
-        try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
-        const nameInput = this.safeGetElement('projectName');
-        const currentName = nameInput ? nameInput.value.trim() : '';
-        let targetProj = (currentName && projects[this.currentProjectId]) ? [projects[this.currentProjectId]] : Object.values(projects);
+        try {
+            const projects = this.readProjects();
+            const current = this.collectProject();
+            const selected = current.name || current.expenses.length ? [current] : Object.values(projects).filter(project => !project.deletedAt);
+            const lines = [['Проект','Дата','Категория','Детали/ФИО','Способ оплаты','Сумма','Чек/Акт','Задачи (ФОТ)']];
+            for (const project of selected) for (const expense of project.expenses || []) {
+                lines.push([project.name || 'Черновик', expense.date, expense.category, expense.comment, expense.pay, this.getNumber(expense.amount).toFixed(2).replace('.', ','), expense.docs ? 'Да' : 'Нет', (expense.tasks || []).join(', ')]);
+            }
+            this.downloadFile('\uFEFF' + lines.map(line => line.map(value => this.csvCell(value)).join(';')).join('\r\n'), 'text/csv;charset=utf-8;', 'Затраты_' + new Date().toLocaleDateString('sv-SE') + '.csv');
+        } catch (error) { this.showError(error); alert('Не удалось выгрузить таблицу: ' + error.message); }
+    },
 
-        targetProj.forEach(p => {
-            const pName = p.name ? p.name.replace(/"/g, '""') : 'Без названия';
-            (p.expenses || []).forEach(e => {
-                const date = e.date || '';
-                const cat = e.category || '';
-                const cmt = e.comment ? String(e.comment).replace(/"/g, '""') : '';
-                const pay = e.pay || '';
-                const amt = e.amount || 0;
-                const docs = e.docs ? 'Да' : 'Нет';
-                const tasks = (e.tasks || []).join(', ');
-                csv += `"${pName}";"${date}";"${cat}";"${cmt}";"${pay}";"${amt}";"${docs}";"${tasks}"\n`;
-            });
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `Smeta_Export_${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
+    restoreRecovery() {
+        try {
+            const previous = StorageService.get('ledRecovery');
+            if (!previous) return;
+            const projects = JSON.parse(previous);
+            if (!projects || typeof projects !== 'object' || Array.isArray(projects)) throw new Error('Резервная копия повреждена.');
+            if (!confirm('Вернуть базу до последнего импорта или удаления? Текущая база будет скачана в файл.')) return;
+            this.exportBackup();
+            StorageService.set('ledProjects', previous);
+            StorageService.del('ledRecovery'); StorageService.del('ledDraft'); StorageService.del('ledLastProject');
+            this.isDirty = false; this.clearProject(); this.updateProjectList();
+            alert('Прежняя база восстановлена. Выбери объект из списка.');
+        } catch (error) { this.showError(error); alert(error.message); }
     },
 
     hardReset() {
-        if (confirm("ВНИМАНИЕ! Полное удаление базы. Продолжить?")) {
-            StorageService.del('ledProjects');
-            StorageService.del('ledTeam');
-            StorageService.del('amountHistory');
-            alert("Очищено.");
-            location.reload();
-        }
+        if (!confirm('Очистить рабочую базу? Перед очисткой будет скачана резервная копия.')) return;
+        this.exportBackup();
+        try {
+            StorageService.set('ledRecovery', StorageService.get('ledProjects') || '{}');
+            StorageService.set('ledProjects', '{}');
+            for (const key of ['ledTeam', 'amountHistory', 'ledDraft', 'ledLastProject']) StorageService.del(key);
+            this.isDirty = false; this.clearProject(); this.loadTeamList(); this.updateProjectList();
+        } catch (error) { this.showError(error); alert('Не удалось очистить базу: ' + error.message); }
     },
 
-    // ---- ДАШБОРД ----
     showDashboard() {
         try {
             const modal = this.safeGetElement('dashboardModal');
@@ -1168,14 +1325,13 @@ const App = {
             if (!modal || !tbody) return;
 
             tbody.innerHTML = '';
-            let projects = {};
-            try { projects = JSON.parse(StorageService.get('ledProjects') || '{}'); } catch(e){}
+            const projects = this.readProjects();
 
             let sumPlan = 0, sumFact = 0, sumDebt = 0, sumExpPlan = 0, sumExpFact = 0, sumDev = 0, sumTax = 0, sumCash = 0, validCount = 0;
 
             for (let id in projects) {
                 const p = projects[id];
-                if (!p) continue;
+                if (!p || p.deletedAt) continue;
 
                 const plan = this.getNumber(p.revenuePlan || '0');
                 const fact = this.getNumber(p.revenueFact || '0');
@@ -1185,21 +1341,20 @@ const App = {
                 if (plan === 0 && fact === 0 && pExps.length === 0 && (!p.name || p.name.trim() === '')) continue;
                 validCount++;
 
-                let expFact = 0, acceptedExp = 0, inputNds = 0, cashFee = parseFloat(p.cashFee || 10);
+                let expFact = 0, acceptedExp = 0, inputNds = 0;
                 for (let i = 0; i < pExps.length; i++) {
                     const e = pExps[i];
                     if (!e) continue;
                     let cost = parseFloat(e.amount || 0);
-                    if (e.pay === 'nal') cost += cost * (cashFee / 100);
-                    if (e.pay === 'npd') cost = cost / 0.94;
+
                     expFact += cost;
                     if (e.docs && (e.pay === 'beznal' || e.pay === 'npd')) acceptedExp += cost;
-                    if (e.docs && e.pay === 'beznal') inputNds += parseFloat(e.amount || 0) * 22 / 122;
+                    // Input VAT is not inferred from a payment method.
                 }
 
                 const taxes = this.getTaxData(plan, fact, acceptedExp, inputNds, p.tax_system || 'usn6');
                 const debt = Math.max(0, plan - fact);
-                const cash = fact - expFact - taxes.taxFact;
+                const cash = fact - expFact;
                 const deviation = expPlan - expFact;
 
                 sumPlan += plan; sumFact += fact; sumDebt += debt; sumExpPlan += expPlan; sumExpFact += expFact; sumDev += deviation; sumTax += taxes.taxFact; sumCash += cash;
@@ -1207,15 +1362,15 @@ const App = {
 
                 tbody.innerHTML += `
                     <tr>
-                        <td data-label="Проект"><b>${projName}</b></td>
-                        <td data-label="План Выручка">${Math.round(plan).toLocaleString()} ₽</td>
-                        <td data-label="Оплачено" style="color: #16a085;">${Math.round(fact).toLocaleString()} ₽</td>
-                        <td data-label="Долг" class="${debt > 0 ? 'debt-alert' : ''}">${Math.round(debt).toLocaleString()} ₽</td>
-                        <td data-label="Лимит Расходов">${Math.round(expPlan).toLocaleString()} ₽</td>
-                        <td data-label="Факт Расходов" style="color: #e74c3c;">${Math.round(expFact).toLocaleString()} ₽</td>
-                        <td data-label="Остаток Лимита" class="${deviation < 0 ? 'dev-bad' : 'dev-ok'}">${deviation > 0 ? '+' : ''}${Math.round(deviation).toLocaleString()} ₽</td>
-                        <td data-label="Налог">${Math.round(taxes.taxFact).toLocaleString()} ₽</td>
-                        <td data-label="В кассе" style="font-weight:bold; color: #2ecc71;">${Math.round(cash).toLocaleString()} ₽</td>
+                        <td data-label="Проект"><b>${this.escapeHTML(projName)}</b></td>
+                        <td data-label="План Выручка">${this.money(plan)} ₽</td>
+                        <td data-label="Оплачено" style="color: #16a085;">${this.money(fact)} ₽</td>
+                        <td data-label="Долг" class="${debt > 0 ? 'debt-alert' : ''}">${this.money(debt)} ₽</td>
+                        <td data-label="Лимит Расходов">${this.money(expPlan)} ₽</td>
+                        <td data-label="Факт Расходов" style="color: #e74c3c;">${this.money(expFact)} ₽</td>
+                        <td data-label="Остаток Лимита" class="${deviation < 0 ? 'dev-bad' : 'dev-ok'}">${deviation > 0 ? '+' : ''}${this.money(deviation)} ₽</td>
+                        <td data-label="Налог">${this.money(taxes.taxFact)} ₽</td>
+                        <td data-label="В кассе" style="font-weight:bold; color: #2ecc71;">${this.money(cash)} ₽</td>
                     </tr>
                 `;
             }
@@ -1224,14 +1379,14 @@ const App = {
                 tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#95a5a6;padding:20px;">Нет данных. Сохраните хотя бы один проект.</td></tr>';
             }
 
-            this.safeSetText('dashSumPlan', Math.round(sumPlan).toLocaleString() + " ₽");
-            this.safeSetText('dashSumFact', Math.round(sumFact).toLocaleString() + " ₽");
-            this.safeSetText('dashSumDebt', Math.round(sumDebt).toLocaleString() + " ₽");
-            this.safeSetText('dashSumExpPlan', Math.round(sumExpPlan).toLocaleString() + " ₽");
-            this.safeSetText('dashSumExpFact', Math.round(sumExpFact).toLocaleString() + " ₽");
-            this.safeSetText('dashSumDeviation', (sumDev > 0 ? '+' : '') + Math.round(sumDev).toLocaleString() + " ₽");
-            this.safeSetText('dashSumTax', Math.round(sumTax).toLocaleString() + " ₽");
-            this.safeSetText('dashSumCash', Math.round(sumCash).toLocaleString() + " ₽");
+            this.safeSetText('dashSumPlan', this.money(sumPlan) + " ₽");
+            this.safeSetText('dashSumFact', this.money(sumFact) + " ₽");
+            this.safeSetText('dashSumDebt', this.money(sumDebt) + " ₽");
+            this.safeSetText('dashSumExpPlan', this.money(sumExpPlan) + " ₽");
+            this.safeSetText('dashSumExpFact', this.money(sumExpFact) + " ₽");
+            this.safeSetText('dashSumDeviation', (sumDev > 0 ? '+' : '') + this.money(sumDev) + " ₽");
+            this.safeSetText('dashSumTax', this.money(sumTax) + " ₽");
+            this.safeSetText('dashSumCash', this.money(sumCash) + " ₽");
 
             modal.style.display = "block";
         } catch (error) { alert("Ошибка Дашборда!\n" + error.message); }

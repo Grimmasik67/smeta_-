@@ -1,0 +1,7 @@
+{
+  "name": "smeta-expense-tracker",
+  "version": "8.0.0",
+  "private": true,
+  "scripts": {"test": "node tests/regression.cjs"},
+  "devDependencies": {"playwright": "1.57.0"}
+}
